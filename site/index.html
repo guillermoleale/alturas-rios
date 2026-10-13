@@ -110,6 +110,8 @@ td.dash-skeleton { height: 3rem; }
 .rh .rh-map .leaflet-control-attribution a { color: inherit; }
 .rh .rh-map .leaflet-bar a { background: var(--color-panel); color: var(--color-fg); border-bottom-color: var(--color-border-line); }
 .rh .rh-map path.leaflet-interactive:focus { outline: none; }
+.rh .rh-map .leaflet-tile-pane { filter: saturate(.5) brightness(1.04); }
+@media (prefers-color-scheme: dark) { .rh .rh-map .leaflet-tile-pane { filter: invert(1) hue-rotate(180deg) saturate(.4) brightness(.85) contrast(.9); } }
 .rh-pop .t-n { font-weight: var(--cds-font-weight-medium); font-size: var(--cds-font-size-body); }
 .rh-pop .t-h { color: var(--color-fg-muted); }
 .rh-pop-btn { font: inherit; margin-top: 6px; padding: 4px 10px; border-radius: 999px; border: 1px solid var(--color-border-line); background: var(--color-fg); color: var(--color-bg); cursor: pointer; }
@@ -848,11 +850,10 @@ dash.calc('resumen', {
     if (s === 'error') { if (!mapa) box.replaceChildren(el('div', 'rh-fail', 'No se pudo cargar')); return; }
     if (s !== 'ok') return;
     if (!mapa) {
-      const oscuro = window.matchMedia('(prefers-color-scheme: dark)').matches;
       mapa = L.map(box, { scrollWheelZoom: false, zoomSnap: 0.5 });
-      L.tileLayer('https://{s}.basemaps.cartocdn.com/' + (oscuro ? 'dark_all' : 'rastertiles/voyager') + '/{z}/{x}/{y}{r}.png', {
-        subdomains: 'abcd', maxZoom: 13,
-        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions">CARTO</a>',
+      L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 13,
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">colaboradores de OpenStreetMap</a>',
       }).addTo(mapa);
       box.addEventListener('click', () => mapa.scrollWheelZoom.enable());
       box.addEventListener('mouseleave', () => mapa.scrollWheelZoom.disable());

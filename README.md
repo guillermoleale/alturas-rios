@@ -12,7 +12,7 @@ Proyecto personal, no oficial. Los datos son preliminares y no están validados.
 - Una lectura por escala y por día desde el 1 de julio de 2026. Cuando hay varias lecturas en un día se usa la de las 0 h, que es la lectura diaria de Prefectura. San Fernando y Buenos Aires publican lecturas horarias y se usa la última del día.
 - Se descartan errores de carga evidentes: un cero cuando el día anterior superaba 0,5 m, o un valor más de tres veces mayor que el del día anterior. No se aplica en el Delta y el Río de la Plata, donde la marea y el viento producen saltos reales. Los descartes quedan registrados en `site/data/meta.json`.
 - Descarga: [`site/data/alturas.csv`](site/data/alturas.csv).
-- Mapa: [Leaflet](https://leafletjs.com/) con mapas base de © [OpenStreetMap](https://www.openstreetmap.org/copyright) y © [CARTO](https://carto.com/attributions).
+- Mapa: [Leaflet](https://leafletjs.com/) con mapas base de © [colaboradores de OpenStreetMap](https://www.openstreetmap.org/copyright).
 
 ## Cómo se actualiza
 
