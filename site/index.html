@@ -91,12 +91,36 @@ body { margin: 0; background: var(--color-bg); color: var(--color-fg); font-fami
 .rh-big.dash-skeleton::after { inset: .15em 45% .15em 0; }
 .rh-take.dash-skeleton::after { inset: .2em 0; }
 td.dash-skeleton { height: 3rem; }
+.rh-map { height: 480px; margin-top: var(--cds-gap-md); border: 1px solid var(--color-border-line); border-radius: var(--cds-radius); overflow: hidden; background: var(--color-bg); z-index: 0; }
+@media (max-width: 520px) { .rh-map { height: 360px; } }
+.rh-map .leaflet-container, .rh-map.leaflet-container { font-family: var(--font-anthropic-sans); background: var(--color-bg); }
+.rh-map path.m { stroke: var(--color-panel); stroke-width: 1.5; fill-opacity: 1; }
+.rh-map path.m-evac { fill: var(--cds-chart-status-critical); }
+.rh-map path.m-alerta { fill: var(--color-warn); }
+.rh-map path.m-normal { fill: var(--cds-chart-reference); }
+.rh-map path.m-bajas { fill: var(--series-1); }
+.rh-map path.m-otro { fill: var(--color-panel); stroke: var(--cds-chart-reference); }
+.rh .rh-map .leaflet-popup-content-wrapper, .rh .rh-map .leaflet-popup-tip { background: var(--cds-surface-popover); color: var(--color-fg); box-shadow: var(--cds-shadow-popover); }
+.rh .rh-map .leaflet-popup-content-wrapper { border-radius: var(--cds-radius); }
+.rh .rh-map .leaflet-popup-content { margin: 10px 14px; font-size: var(--cds-font-size-caption); line-height: 1.5; font-variant-numeric: tabular-nums; }
+.rh .rh-map .leaflet-popup-close-button { color: var(--color-fg-muted); }
+.rh .rh-map .leaflet-tooltip { background: var(--cds-surface-popover); color: var(--color-fg); border: 1px solid var(--cds-border); box-shadow: var(--cds-shadow-popover); font-size: var(--cds-font-size-caption); }
+.rh .rh-map .leaflet-tooltip-top::before { border-top-color: var(--cds-border); }
+.rh .rh-map .leaflet-control-attribution { background: color-mix(in srgb, var(--color-panel) 80%, transparent); color: var(--color-fg-muted); }
+.rh .rh-map .leaflet-control-attribution a { color: inherit; }
+.rh .rh-map .leaflet-bar a { background: var(--color-panel); color: var(--color-fg); border-bottom-color: var(--color-border-line); }
+.rh .rh-map path.leaflet-interactive:focus { outline: none; }
+.rh-pop .t-n { font-weight: var(--cds-font-weight-medium); font-size: var(--cds-font-size-body); }
+.rh-pop .t-h { color: var(--color-fg-muted); }
+.rh-pop-btn { font: inherit; margin-top: 6px; padding: 4px 10px; border-radius: 999px; border: 1px solid var(--color-border-line); background: var(--color-fg); color: var(--color-bg); cursor: pointer; }
 @media (prefers-reduced-motion: no-preference) {
   .dash-skeleton::after { animation: skel 1.4s ease-in-out infinite; }
   @keyframes skel { from { background-position: 100% 0; } to { background-position: -100% 0; } }
 }
 </style>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
 <script src="assets/dash.js"></script>
 </head>
 <body>
@@ -216,6 +240,19 @@ td.dash-skeleton { height: 3rem; }
     <h2>Escalas para mirar</h2>
     <p class="rh-note">En alerta, en evacuación o a menos de 0,50 m del nivel de alerta. Tocá una para ver su evolución.</p>
     <div class="rh-att-wrap dash-skeleton" id="atencion-lista"></div>
+  </section>
+
+  <section class="rh-card" id="mapa">
+    <h2>Mapa de escalas</h2>
+    <p class="rh-note">Cada punto es una escala con el color de su estado. Tocá una para ver su altura y su evolución.</p>
+    <div class="rh-legend">
+      <span><span class="rh-dot e-evac"></span>Evacuación</span>
+      <span><span class="rh-dot e-alerta"></span>Alerta</span>
+      <span><span class="rh-dot" style="background: var(--cds-chart-reference)"></span>Normal</span>
+      <span><span class="rh-dot e-bajas"></span>Aguas bajas</span>
+      <span><span class="rh-dot e-otro"></span>Sin niveles o sin lectura reciente</span>
+    </div>
+    <div class="rh-map" id="mapa-escalas" role="region" aria-label="Mapa de escalas"></div>
   </section>
 
   <section class="rh-card" id="perfil">
@@ -786,6 +823,58 @@ dash.calc('resumen', {
     if (!trs.length) { const tr = el('tr'); const td = el('td', 'rh-empty', 'Ninguna escala coincide con la búsqueda.'); td.colSpan = 12; tr.append(td); tbody.append(tr); }
   }
 
+  // ---------- mapa ----------
+  let mapa = null, capa = null, mapaDe = null;
+  const MCLASE = { 'Evacuación': 'm-evac', 'Alerta': 'm-alerta', 'Normal': 'm-normal', 'Aguas bajas': 'm-bajas' };
+  const MRANGO = { 'Evacuación': 4, 'Alerta': 3, 'Aguas bajas': 2, 'Normal': 1 };
+  const popup = (r) => {
+    const d = el('div', 'rh-pop');
+    d.append(el('div', 't-n', r.nombre), el('div', 't-h', r.tramo + ' · río ' + r.rio));
+    d.append(el('div', null, r.altura != null ? 'Altura ' + fM(r.altura) + ' m · ' + r.estado : r.estado));
+    if (r.alerta != null) d.append(el('div', null, 'Alerta ' + fM(r.alerta) + ' · Evacuación ' + fM(r.evacuacion)));
+    if (r.var_24h != null) d.append(el('div', null, 'Variación 24 h ' + fS(r.var_24h) + ' m'));
+    if (r.fecha) d.append(el('div', 't-h', 'Lectura del ' + fDiaL(r.fecha)));
+    if (r.altura != null) {
+      const b = el('button', 'rh-pop-btn', 'Ver evolución'); b.type = 'button';
+      b.addEventListener('click', () => { mapa.closePopup(); elegir(r.sitecode); });
+      d.append(b);
+    }
+    return d;
+  };
+  function drawMapa(ea, es) {
+    const box = document.getElementById('mapa-escalas');
+    if (typeof L === 'undefined') { box.replaceChildren(el('div', 'rh-fail', 'No se pudo cargar el mapa')); return; }
+    const s = st(ea, es);
+    if (s === 'error') { if (!mapa) box.replaceChildren(el('div', 'rh-fail', 'No se pudo cargar')); return; }
+    if (s !== 'ok') return;
+    if (!mapa) {
+      const oscuro = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      mapa = L.map(box, { scrollWheelZoom: false, zoomSnap: 0.5 });
+      L.tileLayer('https://{s}.basemaps.cartocdn.com/' + (oscuro ? 'dark_all' : 'rastertiles/voyager') + '/{z}/{x}/{y}{r}.png', {
+        subdomains: 'abcd', maxZoom: 13,
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions">CARTO</a>',
+      }).addTo(mapa);
+      box.addEventListener('click', () => mapa.scrollWheelZoom.enable());
+      box.addEventListener('mouseleave', () => mapa.scrollWheelZoom.disable());
+      capa = L.layerGroup().addTo(mapa);
+      mapa.fitBounds(es.data.map((e) => [e.lat, e.lon]), { padding: [20, 20] });
+    }
+    mapa.invalidateSize();
+    if (mapaDe === ea.data) return;
+    mapaDe = ea.data;
+    capa.clearLayers();
+    const coords = new Map(es.data.map((e) => [Number(e.sitecode), e]));
+    ea.data.slice().sort((a, b) => (MRANGO[a.estado] || 0) - (MRANGO[b.estado] || 0)).forEach((r) => {
+      const e = coords.get(Number(r.sitecode));
+      if (!e) return;
+      const fuerte = r.estado === 'Evacuación' || r.estado === 'Alerta';
+      L.circleMarker([e.lat, e.lon], { radius: fuerte ? 8 : 6, weight: 1.5, className: 'm ' + (MCLASE[r.estado] || 'm-otro') })
+        .bindTooltip(r.nombre + (r.altura != null ? ' · ' + fM(r.altura) + ' m' : ''), { direction: 'top', offset: [0, -6] })
+        .bindPopup(() => popup(r))
+        .addTo(capa);
+    });
+  }
+
   // ---------- dibujo ----------
   let primera = true;
   const hashInicial = location.hash;
@@ -795,6 +884,7 @@ dash.calc('resumen', {
     ultimo = { ea, al };
     drawResumen(rs, ea);
     drawAtencion(ea);
+    drawMapa(ea, es);
     drawPerfil(ea);
     drawEvolucion(al, es, ea);
     drawTabla(ea, al);
@@ -809,7 +899,7 @@ dash.calc('resumen', {
     { root: document, rootMargin: '-35% 0px -60% 0px' });
   // Se empieza a seguir la sección visible recién después de la carga: si el link cambia antes,
   // el navegador salta a esa sección al terminar de cargar.
-  const observar = () => ['indicadores', 'atencion', 'perfil', 'evolucion', 'tabla'].forEach((id) => io.observe(document.getElementById(id)));
+  const observar = () => ['indicadores', 'atencion', 'mapa', 'perfil', 'evolucion', 'tabla'].forEach((id) => io.observe(document.getElementById(id)));
   if (document.readyState === 'complete') setTimeout(observar, 0); else window.addEventListener('load', () => setTimeout(observar, 0));
 })();
 </script>
