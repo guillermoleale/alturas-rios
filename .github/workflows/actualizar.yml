@@ -1,0 +1,60 @@
+name: Actualizar y publicar
+
+on:
+  schedule:
+    - cron: "50 15 * * *"   # 12:50 hora de Argentina, después de la lectura diaria de Prefectura
+    - cron: "50 22 * * *"   # 19:50 hora de Argentina, para lecturas que se cargan tarde
+  workflow_dispatch:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+concurrency:
+  group: actualizar
+  cancel-in-progress: false
+
+jobs:
+  actualizar:
+    if: github.event_name != 'push'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Bajar lecturas nuevas del INA
+        run: python scripts/actualizar.py
+      - name: Guardar los datos
+        run: |
+          if git diff --quiet site/data/; then
+            echo "Sin cambios en los datos."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add site/data/
+          git commit -m "Actualizar alturas $(TZ=America/Argentina/Cordoba date +%F)"
+          git push
+
+  publicar:
+    needs: actualizar
+    if: always() && (needs.actualizar.result == 'success' || needs.actualizar.result == 'skipped')
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: site
+      - id: deploy
+        uses: actions/deploy-pages@v4

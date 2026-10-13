@@ -1,0 +1,831 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Alturas de los ríos de la Cuenca del Plata</title>
+<meta name="description" content="Altura diaria de 81 escalas de Prefectura en los ríos Paraná, Paraguay, Uruguay e Iguazú, el Delta y el Río de la Plata, con niveles de alerta y evacuación. Datos del INA, actualizados todos los días.">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Alturas de los ríos de la Cuenca del Plata">
+<meta property="og:description" content="Escalas en alerta y evacuación, distancia al alerta por tramo y evolución diaria. Datos del INA, actualizados todos los días.">
+<meta property="og:url" content="https://guillermoleale.github.io/alturas-rios/">
+<meta property="og:image" content="https://guillermoleale.github.io/alturas-rios/assets/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpath d='M2 20c4 0 4-3 7-3s3 3 7 3 4-3 7-3 3 3 7 3v8H2z' fill='%232f6db5'/%3E%3Cpath d='M2 13c4 0 4-3 7-3s3 3 7 3 4-3 7-3 3 3 7 3' fill='none' stroke='%232f6db5' stroke-width='2.5' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,400&display=swap" rel="stylesheet">
+<style>
+:root {
+  color-scheme: light;
+  --font-anthropic-sans: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-anthropic-serif: "Source Serif 4", Georgia, "Times New Roman", serif;
+  --color-bg: #f5f4f0;
+  --color-panel: #ffffff;
+  --color-fg: #1d1c1a;
+  --color-fg-muted: #66625b;
+  --color-border-line: #e2ded6;
+  --color-ok: #2e7a4d;
+  --color-warn: #a86400;
+  --color-bad: #c2321d;
+  --series-1: #2f6db5;
+  --series-2: #8a5cc2;
+  --series-3: #2b8a7e;
+  --series-4: #b5562f;
+  --cds-chart-status-critical: #d0412b;
+  --cds-chart-muted: #b6b1a8;
+  --cds-chart-grid: #ece9e3;
+  --cds-chart-axis: #c8c3ba;
+  --cds-chart-reference: #858078;
+  --cds-surface-popover: #ffffff;
+  --cds-border: #dcd8cf;
+  --cds-shadow-popover: 0 6px 20px rgba(30, 28, 24, .12);
+  --cds-text-secondary: #66625b;
+  --cds-radius: 10px;
+  --cds-pad-xs: 4px; --cds-pad-sm: 8px; --cds-pad-md: 12px; --cds-pad-lg: 20px; --cds-pad-xl: 28px;
+  --cds-gap-xs: 4px; --cds-gap-sm: 8px; --cds-gap-md: 16px; --cds-gap-lg: 24px; --cds-gap-xl: 32px;
+  --cds-font-size-caption: 13px; --cds-font-size-body: 15px; --cds-font-size-heading: 17px; --cds-font-size-title: 30px;
+  --cds-font-weight-medium: 600;
+  --cds-dur-slow: 300ms;
+  --skel-a: #eceae4; --skel-b: #f6f5f1;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    color-scheme: dark;
+    --color-bg: #151514;
+    --color-panel: #1e1e1c;
+    --color-fg: #ecebe7;
+    --color-fg-muted: #a29e96;
+    --color-border-line: #33322e;
+    --color-ok: #6cc28f;
+    --color-warn: #e3a43c;
+    --color-bad: #f2806b;
+    --series-1: #6ea3e6;
+    --series-2: #b393e3;
+    --series-3: #5cc0b2;
+    --series-4: #e38a63;
+    --cds-chart-status-critical: #f06750;
+    --cds-chart-muted: #5f5c56;
+    --cds-chart-grid: #2b2a27;
+    --cds-chart-axis: #4a4844;
+    --cds-chart-reference: #918d85;
+    --cds-surface-popover: #262624;
+    --cds-border: #3b3a36;
+    --cds-shadow-popover: 0 6px 20px rgba(0, 0, 0, .45);
+    --cds-text-secondary: #a29e96;
+    --skel-a: #262624; --skel-b: #2f2e2b;
+  }
+}
+html { -webkit-text-size-adjust: 100%; }
+body { margin: 0; background: var(--color-bg); color: var(--color-fg); font-family: var(--font-anthropic-sans); font-size: var(--cds-font-size-body); }
+.page { max-width: 1180px; margin-inline: auto; padding: 28px 16px 40px; }
+@media (min-width: 720px) { .page { padding: 40px 28px 56px; } }
+@media (max-width: 520px) { :root { --cds-font-size-title: 26px; --cds-pad-lg: 16px; } }
+.rh a { color: inherit; text-decoration: underline; text-decoration-color: var(--color-fg-muted); text-underline-offset: 2px; }
+.rh a:hover { text-decoration-color: var(--color-fg); }
+.rh-aviso { margin: var(--cds-gap-sm) 0 0; font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); border-left: 2px solid var(--color-warn); padding-left: var(--cds-pad-sm); line-height: 1.45; }
+.dash-skeleton { position: relative; color: transparent !important; }
+.dash-skeleton::after { content: ""; position: absolute; inset: 0; border-radius: 6px; background: linear-gradient(90deg, var(--skel-a), var(--skel-b), var(--skel-a)); background-size: 200% 100%; }
+.rh-big.dash-skeleton::after { inset: .15em 45% .15em 0; }
+.rh-take.dash-skeleton::after { inset: .2em 0; }
+td.dash-skeleton { height: 3rem; }
+@media (prefers-reduced-motion: no-preference) {
+  .dash-skeleton::after { animation: skel 1.4s ease-in-out infinite; }
+  @keyframes skel { from { background-position: 100% 0; } to { background-position: -100% 0; } }
+}
+</style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
+<script src="assets/dash.js"></script>
+</head>
+<body>
+<main class="page">
+<style>
+.rh { font-family: var(--font-anthropic-sans); color: var(--color-fg); display: flex; flex-direction: column; gap: var(--cds-gap-lg); }
+.rh * { box-sizing: border-box; }
+.rh-title { font-family: var(--font-anthropic-serif); font-weight: 400; font-size: var(--cds-font-size-title); line-height: 1.2; margin: 0; }
+.rh-take { font-size: var(--cds-font-size-body); margin: var(--cds-gap-sm) 0 0; max-width: 62rem; line-height: 1.5; min-height: 1.5em; }
+.rh-take.dash-skeleton { max-width: 30rem; }
+.rh-meta, .rh-note { color: var(--color-fg-muted); font-size: var(--cds-font-size-caption); margin: var(--cds-gap-xs) 0 0; line-height: 1.45; }
+.rh .rh-b { font-weight: var(--cds-font-weight-medium); }
+.rh-kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 9.5rem), 1fr)); gap: var(--cds-gap-md); }
+.rh-tile, .rh-card { background: var(--color-panel); border: 1px solid var(--color-border-line); border-radius: var(--cds-radius); padding: var(--cds-pad-lg); min-width: 0; }
+.rh-tile-label { display: flex; align-items: center; gap: var(--cds-gap-xs); font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); }
+.rh-big { font-family: var(--font-anthropic-serif); font-weight: 400; font-size: var(--cds-font-size-title); line-height: 1.15; margin-top: var(--cds-gap-xs); font-variant-numeric: tabular-nums; min-height: 1.15em; }
+.rh-sub { font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); margin-top: var(--cds-gap-xs); }
+.rh-dot { width: .625rem; height: .625rem; border-radius: 50%; display: inline-block; flex: none; background: var(--cds-chart-muted); }
+.rh-dot.e-evac { background: var(--cds-chart-status-critical); }
+.rh-dot.e-alerta { background: var(--color-warn); }
+.rh-dot.e-normal { background: var(--cds-chart-muted); }
+.rh-dot.e-bajas { background: var(--rh-bajas); }
+.rh-dot.e-otro { background: transparent; border: 1.5px solid var(--cds-chart-muted); }
+.rh-card h2 { font-size: var(--cds-font-size-heading); font-weight: var(--cds-font-weight-medium); margin: 0; line-height: 1.3; }
+.rh-head-row { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-start; gap: var(--cds-gap-sm) var(--cds-gap-md); }
+.rh-seg { display: flex; flex-wrap: wrap; gap: var(--cds-gap-xs); }
+.rh-seg button { font: inherit; font-size: var(--cds-font-size-caption); padding: var(--cds-pad-xs) var(--cds-pad-sm); border: 1px solid var(--color-border-line); border-radius: 999px; background: transparent; color: var(--color-fg); cursor: pointer; font-variant-numeric: tabular-nums; }
+.rh-seg button[aria-pressed="true"] { background: var(--color-fg); color: var(--color-bg); border-color: var(--color-fg); }
+.rh-tramos { margin-top: var(--cds-gap-md); }
+.rh-legend { display: flex; flex-wrap: wrap; gap: var(--cds-gap-xs) var(--cds-gap-md); margin-top: var(--cds-gap-md); font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); }
+.rh-legend span { display: inline-flex; align-items: center; gap: var(--cds-gap-xs); }
+.rh-sw { display: inline-block; width: 1.25rem; height: .375rem; border-radius: 999px; }
+.rh-sw.band { background: var(--cds-chart-grid); }
+.rh-sw.warn { background: var(--color-warn); opacity: .4; }
+.rh-sw.tick { width: 2px; height: .875rem; border-radius: 0; background: var(--cds-chart-status-critical); }
+.rh-chart { position: relative; margin-top: var(--cds-gap-md); min-height: 14rem; }
+.rh-chart svg { display: block; overflow: visible; }
+.rh-chart text { font-family: var(--font-anthropic-sans); }
+.rh-tip { position: absolute; pointer-events: none; opacity: 0; z-index: 3; background: var(--cds-surface-popover); border: 1px solid var(--cds-border); border-radius: var(--cds-radius); box-shadow: var(--cds-shadow-popover); padding: var(--cds-pad-xs) var(--cds-pad-sm); font-size: var(--cds-font-size-caption); line-height: 1.45; max-width: 17rem; font-variant-numeric: tabular-nums; }
+.rh-tip .t-h { color: var(--cds-text-secondary); }
+.rh-tip .t-n { font-weight: var(--cds-font-weight-medium); }
+.rh-fail { display: flex; align-items: center; justify-content: center; gap: var(--cds-gap-xs); min-height: inherit; color: var(--color-fg-muted); font-size: var(--cds-font-size-caption); }
+.rh-fail::before { content: ""; width: .375rem; height: .375rem; border-radius: 50%; background: var(--color-bad); }
+.rh-empty { color: var(--color-fg-muted); font-size: var(--cds-font-size-caption); margin: var(--cds-gap-md) 0 0; }
+.rh-att { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 15rem), 1fr)); gap: var(--cds-gap-sm); margin-top: var(--cds-gap-sm); }
+.rh-att-g { font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); margin: var(--cds-gap-md) 0 0; }
+.rh-att-item { font: inherit; text-align: left; color: var(--color-fg); background: transparent; border: 1px solid var(--color-border-line); border-radius: var(--cds-radius); padding: var(--cds-pad-sm) var(--cds-pad-md); cursor: pointer; display: flex; flex-direction: column; gap: 2px; font-variant-numeric: tabular-nums; }
+.rh-att-item:hover { border-color: var(--color-fg-muted); }
+.rh-att-name { display: flex; align-items: center; gap: var(--cds-gap-xs); font-weight: var(--cds-font-weight-medium); }
+.rh-att-line { font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); }
+.rh-att-wrap { min-height: 4rem; }
+.rh-ctrl { display: flex; flex-wrap: wrap; gap: var(--cds-gap-sm); align-items: center; }
+.rh-ctrl select, .rh-ctrl input { font: inherit; font-size: var(--cds-font-size-caption); color: var(--color-fg); background: var(--color-bg); border: 1px solid var(--color-border-line); border-radius: var(--cds-radius); padding: var(--cds-pad-xs) var(--cds-pad-sm); max-width: 100%; }
+.rh-ctrl input { min-width: 0; width: 12rem; }
+.rh-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 7rem), 1fr)); gap: var(--cds-gap-sm); margin-top: var(--cds-gap-md); }
+.rh-stat { border-left: 2px solid var(--color-border-line); padding-left: var(--cds-pad-sm); min-width: 0; }
+.rh-stat .k { font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); }
+.rh-stat .v { font-size: var(--cds-font-size-heading); font-variant-numeric: tabular-nums; margin-top: 2px; display: flex; align-items: center; gap: var(--cds-gap-xs); min-height: 1.4em; }
+.rh-tablewrap { container-type: inline-size; margin-top: var(--cds-gap-md); max-height: 34rem; overflow: auto; border-top: 1px solid var(--color-border-line); }
+.rh-table { width: 100%; border-collapse: collapse; font-size: var(--cds-font-size-caption); font-variant-numeric: tabular-nums; }
+.rh-table th { position: sticky; top: 0; background: var(--color-panel); z-index: 1; text-align: left; font-weight: var(--cds-font-weight-medium); color: var(--color-fg-muted); border-bottom: 1px solid var(--color-border-line); padding: 0; white-space: nowrap; }
+.rh-table th button { font: inherit; color: inherit; background: none; border: 0; padding: var(--cds-pad-sm) var(--cds-pad-xs); cursor: pointer; width: 100%; text-align: inherit; }
+.rh-table th[aria-sort="ascending"] button::after { content: " ↑"; }
+.rh-table th[aria-sort="descending"] button::after { content: " ↓"; }
+.rh-table td { padding: var(--cds-pad-xs); border-bottom: 1px solid var(--color-border-line); white-space: nowrap; }
+.rh-table .n { text-align: right; }
+.rh-table th.n button { text-align: right; }
+.rh-table tbody tr { cursor: pointer; }
+.rh-table tbody tr:hover td { background: var(--color-bg); }
+.rh-table .est { display: inline-flex; align-items: center; gap: var(--cds-gap-xs); }
+.rh-table td.name { font-weight: var(--cds-font-weight-medium); color: var(--color-fg); }
+.rh-table .spark { padding-top: 2px; padding-bottom: 2px; }
+@container (max-width: 780px) { .rh-table .c-sec { display: none; } }
+@container (max-width: 520px) { .rh-table .c-ter { display: none; } }
+.rh-foot { color: var(--color-fg-muted); font-size: var(--cds-font-size-caption); line-height: 1.5; margin: 0; }
+.rh [data-dash-source-state=empty] { color: transparent; }
+.rh [data-dash-source-state=refreshing] { opacity: .5; transition: opacity var(--cds-dur-slow); }
+</style>
+
+<div class="rh">
+  <header id="inicio">
+    <h1 class="rh-title">Alturas de los ríos de la Cuenca del Plata</h1>
+    <p class="rh-take dash-skeleton" id="resumen-texto"></p>
+    <p class="rh-meta">Escalas de Prefectura Naval publicadas por el Sistema de Alerta Hidrológico del INA. Última lectura: <span data-source="resumen" data-field="fecha" data-row="0">–</span>. <span id="actualizado"></span></p>
+    <p class="rh-aviso">Proyecto personal, no oficial. Los datos son preliminares y no están validados. Para alertas, consultá al <a href="https://www.ina.gob.ar/alerta/index.php" target="_blank" rel="noopener">INA</a> y a <a href="https://contenidosweb.prefecturanaval.gob.ar/alturas/" target="_blank" rel="noopener">Prefectura Naval</a>.</p>
+  </header>
+
+  <section class="rh-kpis" id="indicadores" aria-label="Escalas por estado">
+    <div class="rh-tile" id="kpi-evacuacion">
+      <div class="rh-tile-label"><span class="rh-dot e-evac"></span>Evacuación</div>
+      <div class="rh-big dash-skeleton" data-source="resumen" data-field="evacuacion" data-row="0">–</div>
+      <div class="rh-sub">escalas sobre el nivel de evacuación</div>
+    </div>
+    <div class="rh-tile" id="kpi-alerta">
+      <div class="rh-tile-label"><span class="rh-dot e-alerta"></span>Alerta</div>
+      <div class="rh-big dash-skeleton" data-source="resumen" data-field="alerta" data-row="0">–</div>
+      <div class="rh-sub">entre el nivel de alerta y el de evacuación</div>
+    </div>
+    <div class="rh-tile" id="kpi-normal">
+      <div class="rh-tile-label"><span class="rh-dot e-normal"></span>Normal</div>
+      <div class="rh-big dash-skeleton" data-source="resumen" data-field="normal" data-row="0">–</div>
+      <div class="rh-sub">entre aguas bajas y alerta</div>
+    </div>
+    <div class="rh-tile" id="kpi-bajas">
+      <div class="rh-tile-label"><span class="rh-dot e-bajas"></span>Aguas bajas</div>
+      <div class="rh-big dash-skeleton" data-source="resumen" data-field="aguas_bajas" data-row="0">–</div>
+      <div class="rh-sub">por debajo del nivel de aguas bajas</div>
+    </div>
+    <div class="rh-tile" id="kpi-suben">
+      <div class="rh-tile-label">Suben respecto de ayer</div>
+      <div class="rh-big dash-skeleton" data-source="resumen" data-field="suben" data-row="0">–</div>
+      <div class="rh-sub">de <span data-source="resumen" data-field="con_lectura" data-row="0">–</span> escalas con lectura reciente</div>
+    </div>
+  </section>
+
+  <section class="rh-card" id="atencion">
+    <h2>Escalas para mirar</h2>
+    <p class="rh-note">En alerta, en evacuación o a menos de 0,50 m del nivel de alerta. Tocá una para ver su evolución.</p>
+    <div class="rh-att-wrap dash-skeleton" id="atencion-lista"></div>
+  </section>
+
+  <section class="rh-card" id="perfil">
+    <h2>Qué tan cerca del alerta está cada escala</h2>
+    <p class="rh-note">Altura de hoy menos el nivel de alerta de esa escala, de aguas arriba (arriba) a aguas abajo (abajo). A la derecha de la línea punteada, la escala superó el alerta.</p>
+    <div class="rh-seg rh-tramos" id="tramos" role="group" aria-label="Tramo"></div>
+    <div class="rh-legend">
+      <span><span class="rh-dot e-evac"></span>Evacuación</span>
+      <span><span class="rh-dot e-alerta"></span>Alerta</span>
+      <span><span class="rh-dot e-normal"></span>Normal</span>
+      <span><span class="rh-dot e-bajas"></span>Aguas bajas</span>
+      <span><span class="rh-sw band"></span>Franja normal</span>
+      <span><span class="rh-sw warn"></span>Franja de alerta</span>
+      <span><span class="rh-sw tick"></span>Nivel de evacuación</span>
+    </div>
+    <div class="rh-chart dash-skeleton" id="perfil-chart" data-source="estado_actual"></div>
+    <p class="rh-note" id="perfil-nota"></p>
+  </section>
+
+  <section class="rh-card" id="evolucion">
+    <div class="rh-head-row">
+      <div>
+        <h2 id="evo-titulo">Evolución de la altura</h2>
+        <p class="rh-note">Lectura diaria en metros, con los niveles de referencia de la escala.</p>
+      </div>
+      <div class="rh-ctrl">
+        <select id="evo-estacion" aria-label="Escala" data-source="estaciones"></select>
+        <div class="rh-seg" id="evo-dias" role="group" aria-label="Período">
+          <button type="button" data-dias="15">15 días</button>
+          <button type="button" data-dias="30">30 días</button>
+          <button type="button" data-dias="todo">Desde el 1 de julio</button>
+        </div>
+      </div>
+    </div>
+    <div class="rh-stats" id="evo-stats">
+      <div class="rh-stat"><div class="k">Altura</div><div class="v" data-source="estado_actual" data-field="altura">–</div></div>
+      <div class="rh-stat"><div class="k">Variación 24 h</div><div class="v" data-source="estado_actual" data-field="var_24h">–</div></div>
+      <div class="rh-stat"><div class="k">Variación 7 días</div><div class="v" data-source="estado_actual" data-field="var_7d">–</div></div>
+      <div class="rh-stat"><div class="k">Respecto del alerta</div><div class="v" data-source="estado_actual" data-field="margen_alerta">–</div></div>
+      <div class="rh-stat"><div class="k">Estado</div><div class="v"><span class="rh-dot" id="evo-dot"></span><span data-source="estado_actual" data-field="estado">–</span></div></div>
+    </div>
+    <div class="rh-chart dash-skeleton" id="evo-chart" data-source="alturas estaciones" style="min-height: 18rem"></div>
+    <p class="rh-note" id="evo-nota"></p>
+  </section>
+
+  <section class="rh-card" id="tabla">
+    <div class="rh-head-row">
+      <div>
+        <h2>Todas las escalas</h2>
+        <p class="rh-note">Ordená por cualquier columna. Tocá una fila para ver su evolución.</p>
+      </div>
+      <div class="rh-ctrl">
+        <input type="search" id="tabla-buscar" placeholder="Buscar escala o río" aria-label="Buscar escala o río">
+        <select id="tabla-tramo" aria-label="Tramo"></select>
+        <select id="tabla-estado" aria-label="Estado"></select>
+      </div>
+    </div>
+    <div class="rh-tablewrap">
+      <table class="rh-table" id="tabla-escalas" data-source="estado_actual" data-row-key="sitecode">
+        <thead><tr>
+          <th data-field="nombre" data-k="nombre"><button type="button">Escala</button></th>
+          <th class="c-sec" data-field="rio" data-k="rio"><button type="button">Río</button></th>
+          <th class="c-sec" data-field="provincia" data-k="provincia"><button type="button">Provincia</button></th>
+          <th class="n" data-field="altura" data-k="altura"><button type="button">Altura (m)</button></th>
+          <th class="n" data-field="var_24h" data-k="var_24h"><button type="button">24 h</button></th>
+          <th class="n c-ter" data-field="var_7d" data-k="var_7d"><button type="button">7 días</button></th>
+          <th class="n c-ter" data-field="alerta" data-k="alerta"><button type="button">Alerta</button></th>
+          <th class="n c-ter" data-field="evacuacion" data-k="evacuacion"><button type="button">Evacuación</button></th>
+          <th class="n c-sec" data-field="aguas_bajas" data-k="aguas_bajas"><button type="button">Aguas bajas</button></th>
+          <th data-field="estado" data-k="estado"><button type="button">Estado</button></th>
+          <th class="c-sec" data-field="fecha" data-k="fecha"><button type="button">Lectura</button></th>
+          <th class="c-sec">Últimos 30 días</th>
+        </tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </section>
+
+  <p class="rh-foot" id="fuente">Fuente: API pública del <a href="https://alerta.ina.gob.ar/pub/datos/" target="_blank" rel="noopener">Sistema de Alerta Hidrológico del INA</a>, red «escalas Prefectura Nacional». Alturas diarias desde el 1 de julio de 2026; niveles de alerta, evacuación y aguas bajas según el INA. Una escala sin lectura en los últimos dos días figura como «sin dato reciente». En el Delta y el Río de la Plata la altura depende de la marea y el viento, así que una lectura diaria puede no captar el pico. Se corrigieron dos errores de carga de la fuente: Empedrado del 22/9 al 2/10 (se usó la lectura de las 0 h) y Libertador el 22/8 (78,91 m, descartado). La página se actualiza sola todos los días.</p>
+  <p class="rh-foot">Datos: <a href="data/alturas.csv" download>descargar CSV</a>. Código: <a href="https://github.com/guillermoleale/alturas-rios" target="_blank" rel="noopener">github.com/guillermoleale/alturas-rios</a>. Hecho por Guillermo Leale con Claude.</p>
+</div>
+
+<script>
+dash.calc('estado_actual', {
+  title: 'Estado actual por escala',
+  description: 'Última lectura de cada escala, su variación a 1 y 7 días y su estado frente a los niveles de alerta, evacuación y aguas bajas.',
+  inputs: ['estaciones', 'alturas'],
+  fn: (estaciones, alturas) => {
+    const dia = (f, n) => new Date(Date.parse(f + 'T00:00:00Z') - n * 864e5).toISOString().slice(0, 10);
+    const r2 = (x) => Math.round(x * 100) / 100;
+    const hoy = alturas.reduce((m, r) => (r.fecha > m ? r.fecha : m), '');
+    const porSitio = {};
+    alturas.forEach((r) => { (porSitio[r.sitecode] = porSitio[r.sitecode] || {})[r.fecha] = Number(r.altura); });
+    return estaciones.map((e) => {
+      const s = porSitio[e.sitecode] || {};
+      const ult = Object.keys(s).sort().pop();
+      const h = ult ? s[ult] : null;
+      const h1 = ult ? s[dia(ult, 1)] : undefined;
+      const h7 = ult ? s[dia(ult, 7)] : undefined;
+      const estado = !ult ? 'Sin datos'
+        : ult < dia(hoy, 2) ? 'Sin dato reciente'
+        : e.evacuacion != null && h >= e.evacuacion ? 'Evacuación'
+        : e.alerta != null && h >= e.alerta ? 'Alerta'
+        : e.aguas_bajas != null && h < e.aguas_bajas ? 'Aguas bajas'
+        : e.alerta == null ? 'Sin niveles' : 'Normal';
+      return {
+        sitecode: e.sitecode, nombre: e.nombre, tramo: e.tramo, rio: e.rio, provincia: e.provincia, orden: e.orden,
+        fecha: ult || null, altura: h,
+        var_24h: h1 != null ? r2(h - h1) : null, var_7d: h7 != null ? r2(h - h7) : null,
+        alerta: e.alerta, evacuacion: e.evacuacion, aguas_bajas: e.aguas_bajas,
+        margen_alerta: h != null && e.alerta != null ? r2(h - e.alerta) : null, estado,
+      };
+    });
+  },
+});
+
+dash.calc('resumen', {
+  title: 'Escalas por estado',
+  description: 'Cuántas escalas con lectura reciente hay en cada estado y cuántas subieron respecto del día anterior.',
+  inputs: ['estado_actual'],
+  fn: (estado_actual) => {
+    const vigentes = estado_actual.filter((r) => r.estado !== 'Sin datos' && r.estado !== 'Sin dato reciente');
+    const n = (e) => vigentes.filter((r) => r.estado === e).length;
+    return [{
+      fecha: vigentes.reduce((m, r) => (r.fecha > m ? r.fecha : m), ''),
+      evacuacion: n('Evacuación'), alerta: n('Alerta'), normal: n('Normal'), aguas_bajas: n('Aguas bajas'), sin_niveles: n('Sin niveles'),
+      suben: vigentes.filter((r) => r.var_24h > 0).length,
+      bajan: vigentes.filter((r) => r.var_24h < 0).length,
+      con_lectura: vigentes.length,
+    }];
+  },
+});
+</script>
+
+<script>
+(() => {
+  const root = document.querySelector('.rh');
+  root.style.setProperty('--rh-bajas', dash.colors[0]);
+
+  const MES = ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'sep', 'oct', 'nov', 'dic'];
+  const MESL = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'];
+  const TRAMOS = ['Alto Paraná e Iguazú', 'Paraná medio e inferior', 'Delta y Río de la Plata', 'Paraguay', 'Uruguay'];
+  const ESTADOS = ['Evacuación', 'Alerta', 'Aguas bajas', 'Normal', 'Sin niveles', 'Sin dato reciente', 'Sin datos'];
+  const CLASE = { 'Evacuación': 'e-evac', 'Alerta': 'e-alerta', 'Normal': 'e-normal', 'Aguas bajas': 'e-bajas' };
+  const COLOR = { 'Evacuación': 'var(--cds-chart-status-critical)', 'Alerta': 'var(--color-warn)', 'Normal': 'var(--cds-chart-muted)', 'Aguas bajas': dash.colors[0] };
+  const VIGENTE = (r) => r.estado !== 'Sin datos' && r.estado !== 'Sin dato reciente';
+
+  const parseDia = (s) => new Date(s + 'T00:00:00Z');
+  const fDia = (s) => { const d = parseDia(s); return d.getUTCDate() + ' ' + MES[d.getUTCMonth()]; };
+  const fDiaL = (s) => { const d = parseDia(s); return d.getUTCDate() + ' de ' + MESL[d.getUTCMonth()]; };
+  const nf2 = new Intl.NumberFormat('es-AR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  const nf1 = new Intl.NumberFormat('es-AR', { maximumFractionDigits: 1 });
+  const minus = (t) => t.replace('-', '−');
+  const fM = (v) => (v == null ? '–' : minus(nf2.format(v)));
+  const fS = (v) => (v == null ? '–' : (v > 0 ? '+' : '') + minus(nf2.format(v)));
+  const fTick = (v) => (v > 0 ? '+' : '') + minus(nf1.format(v));
+
+  const el = (tag, cls, text) => { const n = document.createElement(tag); if (cls) n.className = cls; if (text != null) n.textContent = text; return n; };
+  const mark = (n, src, field, sitecode) => {
+    n.setAttribute('data-source', src);
+    n.setAttribute('data-field', field);
+    if (sitecode != null) n.setAttribute('data-where', 'sitecode=' + sitecode); else n.setAttribute('data-row', '0');
+    return n;
+  };
+  const st = (...ds) => (ds.some((d) => ['error', 'connect', 'declined', 'missing'].includes(d.status)) ? 'error'
+    : ds.every((d) => d.status === 'ok') ? 'ok' : 'loading');
+  const stateBox = (box, s) => {
+    box.classList.toggle('dash-skeleton', s === 'loading');
+    if (s === 'error') box.replaceChildren(el('div', 'rh-fail', 'No se pudo cargar'));
+    else box.replaceChildren();
+  };
+  const tip = (box) => box.querySelector('.rh-tip') || box.appendChild(el('div', 'rh-tip'));
+  const showTip = (box, t, event, lines) => {
+    t.replaceChildren(...lines);
+    t.style.opacity = 1;
+    const [mx, my] = d3.pointer(event, box);
+    const w = t.offsetWidth, h = t.offsetHeight, W = box.clientWidth;
+    let x = mx + 14; if (x + w > W) x = Math.max(0, mx - w - 14);
+    let y = my + 14; if (y + h > box.clientHeight) y = Math.max(0, my - h - 14);
+    t.style.left = x + 'px'; t.style.top = y + 'px';
+  };
+  const line = (cls, text) => el('div', cls, text);
+  const textW = (svg, text, cls) => {
+    const t = svg.append('text').attr('class', cls || null).attr('font-size', 12).text(text);
+    const w = t.node().getComputedTextLength(); t.remove(); return w;
+  };
+
+  const elegir = (sc) => {
+    dash.setParams({ estacion: Number(sc) });
+    const sec = document.getElementById('evolucion');
+    sec.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    dash.setLink('evolucion');
+  };
+
+  // ---------- encabezado y tarjetas ----------
+  function drawResumen(rs, ea) {
+    const s = st(rs, ea);
+    document.querySelectorAll('.rh [data-source="resumen"]').forEach((n) => {
+      if (s === 'ok') {
+        const v = rs.data[0][n.dataset.field];
+        n.textContent = n.dataset.field === 'fecha' ? fDiaL(v) : String(v);
+        n.classList.remove('dash-skeleton');
+      } else if (s === 'error') { n.textContent = '–'; n.classList.remove('dash-skeleton'); }
+    });
+    const p = document.getElementById('resumen-texto');
+    if (s !== 'ok') { p.classList.toggle('dash-skeleton', s === 'loading'); p.textContent = s === 'error' ? 'No se pudieron cargar las alturas.' : ''; return; }
+    p.classList.remove('dash-skeleton');
+    const r = rs.data[0];
+    const out = [];
+    const t = (x) => out.push(document.createTextNode(x));
+    const m = (src, field, sc, text) => out.push(mark(el('span', 'rh-b', text), src, field, sc));
+    if (r.evacuacion + r.alerta === 0) t('Ninguna escala supera hoy el nivel de alerta. ');
+    else {
+      m('resumen', 'evacuacion', null, String(r.evacuacion));
+      t(r.evacuacion === 1 ? ' escala supera el nivel de evacuación y ' : ' escalas superan el nivel de evacuación y ');
+      m('resumen', 'alerta', null, String(r.alerta));
+      t(r.alerta === 1 ? ' está en alerta' : ' están en alerta');
+      const crit = ea.data.filter((x) => x.estado === 'Evacuación' || x.estado === 'Alerta');
+      const tramos = [...new Set(crit.map((x) => x.tramo))];
+      t(tramos.length === 1 && crit.length > 1 ? ', todas en el tramo ' + tramos[0] + '. ' : '. ');
+    }
+    const top = ea.data.filter((x) => VIGENTE(x) && x.var_24h != null).sort((a, b) => b.var_24h - a.var_24h)[0];
+    if (top && top.var_24h > 0) {
+      t('La mayor suba del día es la de ');
+      m('estado_actual', 'nombre', top.sitecode, top.nombre);
+      t(' (');
+      m('estado_actual', 'var_24h', top.sitecode, fS(top.var_24h));
+      t(' m en 24 h).');
+    }
+    p.replaceChildren(...out);
+  }
+
+  // ---------- escalas para mirar ----------
+  function drawAtencion(ea) {
+    const box = document.getElementById('atencion-lista');
+    const s = st(ea);
+    if (s !== 'ok') { stateBox(box, s); return; }
+    box.classList.remove('dash-skeleton');
+    const rows = ea.data.filter((r) => VIGENTE(r) && r.margen_alerta != null).sort((a, b) => b.margen_alerta - a.margen_alerta);
+    const grupos = [
+      ['Sobre el nivel de evacuación', rows.filter((r) => r.estado === 'Evacuación')],
+      ['Sobre el nivel de alerta', rows.filter((r) => r.estado === 'Alerta')],
+      ['A menos de 0,50 m del alerta', rows.filter((r) => r.estado !== 'Evacuación' && r.estado !== 'Alerta' && r.margen_alerta >= -0.5)],
+    ].filter((g) => g[1].length);
+    if (!grupos.length) { box.replaceChildren(el('p', 'rh-empty', 'Ninguna escala está en alerta, en evacuación ni cerca del nivel de alerta.')); return; }
+    const out = [];
+    grupos.forEach(([titulo, items]) => {
+      out.push(el('p', 'rh-att-g', titulo));
+      const grid = el('div', 'rh-att');
+      items.forEach((r) => {
+        const b = el('button', 'rh-att-item'); b.type = 'button'; b.dataset.sitecode = r.sitecode;
+        const nm = el('span', 'rh-att-name');
+        nm.append(el('span', 'rh-dot ' + (CLASE[r.estado] || 'e-otro')), mark(el('span', null, r.nombre), 'estado_actual', 'nombre', r.sitecode));
+        const l1 = el('span', 'rh-att-line');
+        l1.append(mark(el('span', null, fM(r.altura)), 'estado_actual', 'altura', r.sitecode), ' m · ',
+          mark(el('span', null, fS(r.margen_alerta)), 'estado_actual', 'margen_alerta', r.sitecode), ' m respecto del alerta');
+        const l2 = el('span', 'rh-att-line');
+        l2.append(r.tramo + ' · ', mark(el('span', null, fS(r.var_24h)), 'estado_actual', 'var_24h', r.sitecode), ' m en 24 h');
+        b.append(nm, l1, l2);
+        b.addEventListener('click', () => elegir(r.sitecode));
+        grid.append(b);
+      });
+      out.push(grid);
+    });
+    box.replaceChildren(...out);
+  }
+
+  // ---------- perfil por tramo ----------
+  function drawPerfil(ea) {
+    const box = document.getElementById('perfil-chart');
+    const seg = document.getElementById('tramos');
+    const nota = document.getElementById('perfil-nota');
+    const s = st(ea);
+    if (s !== 'ok') { stateBox(box, s); seg.replaceChildren(); nota.textContent = ''; return; }
+    box.classList.remove('dash-skeleton');
+    const rows = ea.data;
+    const crit = (t) => rows.filter((r) => r.tramo === t && (r.estado === 'Evacuación' || r.estado === 'Alerta')).length;
+    const def = TRAMOS.slice().sort((a, b) => crit(b) - crit(a) || (b === 'Paraná medio e inferior') - (a === 'Paraná medio e inferior'))[0];
+    const tramo = TRAMOS.includes(dash.params().tramo) ? dash.params().tramo : def;
+    seg.replaceChildren(...TRAMOS.map((t) => {
+      const b = el('button', null, t + (crit(t) ? ' · ' + crit(t) : ''));
+      b.type = 'button'; b.setAttribute('aria-pressed', String(t === tramo));
+      b.addEventListener('click', () => dash.setParams({ tramo: t }));
+      return b;
+    }));
+
+    const sel = rows.filter((r) => r.tramo === tramo).sort((a, b) => a.orden - b.orden);
+    const ok = sel.filter((r) => VIGENTE(r) && r.margen_alerta != null);
+    const sinNiv = sel.filter((r) => VIGENTE(r) && r.margen_alerta == null);
+    const sinDat = sel.filter((r) => !VIGENTE(r));
+    const notas = [];
+    if (sinNiv.length) notas.push('Sin niveles de referencia: ' + sinNiv.map((r) => r.nombre + ' (' + fM(r.altura) + ' m)').join(', ') + '.');
+    if (sinDat.length) notas.push('Sin lectura reciente: ' + sinDat.map((r) => r.nombre).join(', ') + '.');
+    if (tramo === 'Delta y Río de la Plata') notas.push('En este tramo la altura depende de la marea y el viento.');
+    nota.textContent = notas.join(' ');
+    if (!ok.length) { box.replaceChildren(el('p', 'rh-empty', 'No hay escalas con niveles de referencia y lectura reciente en este tramo.')); return; }
+
+    box.replaceChildren();
+    const W = Math.max(280, box.clientWidth);
+    const rowH = 28, mt = 26, mb = 30;
+    const H = mt + ok.length * rowH + mb;
+    const svg = d3.select(box).append('svg').attr('width', '100%').attr('viewBox', `0 0 ${W} ${H}`).attr('role', 'img')
+      .attr('aria-label', 'Distancia al nivel de alerta por escala, tramo ' + tramo);
+    const ml = Math.min(W * 0.42, d3.max(ok, (r) => textW(svg, r.nombre)) + 12);
+    const mr = d3.max(ok, (r) => textW(svg, fM(r.altura) + ' m')) + 14;
+    const lo = d3.min(ok, (r) => Math.min(r.margen_alerta, r.aguas_bajas != null ? r.aguas_bajas - r.alerta : r.margen_alerta, 0));
+    const hi = d3.max(ok, (r) => Math.max(r.margen_alerta, r.evacuacion != null ? r.evacuacion - r.alerta : 0, 0));
+    const pad = Math.max(0.2, (hi - lo) * 0.04);
+    const x = d3.scaleLinear([lo - pad, hi + pad], [ml, W - mr]);
+
+    const ax = svg.append('g').attr('transform', `translate(0,${H - mb + 6})`)
+      .call(d3.axisBottom(x).ticks(Math.max(2, Math.floor((W - ml - mr) / 70))).tickFormat((v) => fTick(v) + ' m').tickSizeOuter(0));
+    ax.attr('font-size', null).attr('font-family', null);
+    ax.select('.domain').attr('stroke', 'var(--cds-chart-axis)');
+    ax.selectAll('.tick line').attr('stroke', 'var(--cds-chart-axis)');
+    ax.selectAll('.tick text').attr('fill', 'var(--color-fg-muted)').attr('font-size', 11);
+    svg.append('g').selectAll('line').data(x.ticks(Math.max(2, Math.floor((W - ml - mr) / 70)))).join('line')
+      .attr('x1', (d) => x(d)).attr('x2', (d) => x(d)).attr('y1', mt - 4).attr('y2', H - mb + 6)
+      .attr('stroke', 'var(--cds-chart-grid)');
+    svg.append('line').attr('x1', x(0)).attr('x2', x(0)).attr('y1', mt - 10).attr('y2', H - mb + 6)
+      .attr('stroke', 'var(--cds-chart-reference)').attr('stroke-dasharray', '4 4').attr('stroke-width', 1.5);
+    svg.append('text').attr('x', x(0)).attr('y', mt - 14).attr('text-anchor', 'middle').attr('font-size', 11)
+      .attr('fill', 'var(--color-fg-muted)').text('Nivel de alerta');
+
+    const t = tip(box);
+    const g = svg.append('g').selectAll('g').data(ok).join('g').attr('transform', (d, i) => `translate(0,${mt + i * rowH + rowH / 2})`)
+      .style('cursor', 'pointer');
+    g.append('rect').attr('x', 0).attr('y', -rowH / 2).attr('width', W).attr('height', rowH).attr('fill', 'transparent');
+    g.append('text').attr('x', ml - 12).attr('dy', '0.35em').attr('text-anchor', 'end').attr('font-size', 12)
+      .attr('fill', 'var(--color-fg)').text((d) => d.nombre);
+    g.append('line').attr('x1', (d) => x(d.aguas_bajas != null ? d.aguas_bajas - d.alerta : Math.min(d.margen_alerta, 0)))
+      .attr('x2', x(0)).attr('stroke', 'var(--cds-chart-grid)').attr('stroke-width', 6).attr('stroke-linecap', 'round');
+    g.filter((d) => d.evacuacion != null).append('line').attr('x1', x(0)).attr('x2', (d) => x(d.evacuacion - d.alerta))
+      .attr('stroke', 'var(--color-warn)').attr('stroke-opacity', 0.4).attr('stroke-width', 6);
+    g.filter((d) => d.evacuacion != null).append('line').attr('x1', (d) => x(d.evacuacion - d.alerta)).attr('x2', (d) => x(d.evacuacion - d.alerta))
+      .attr('y1', -7).attr('y2', 7).attr('stroke', 'var(--cds-chart-status-critical)').attr('stroke-width', 2);
+    g.append('circle').attr('cx', (d) => x(d.margen_alerta)).attr('r', 5.5).attr('fill', (d) => COLOR[d.estado] || 'var(--cds-chart-muted)')
+      .attr('stroke', 'var(--color-panel)').attr('stroke-width', 2);
+    g.append('text').attr('x', W - mr + 10).attr('dy', '0.35em').attr('font-size', 12).attr('fill', 'var(--color-fg-muted)')
+      .style('font-variant-numeric', 'tabular-nums').text((d) => fM(d.altura) + ' m');
+    g.on('mousemove', (event, d) => showTip(box, t, event, [
+      line('t-n', d.nombre), line('t-h', 'Lectura del ' + fDiaL(d.fecha)),
+      line(null, 'Altura ' + fM(d.altura) + ' m · ' + fS(d.margen_alerta) + ' m respecto del alerta'),
+      line(null, 'Alerta ' + fM(d.alerta) + ' · Evacuación ' + fM(d.evacuacion) + ' · Aguas bajas ' + fM(d.aguas_bajas)),
+      line(null, 'Variación 24 h ' + fS(d.var_24h) + ' m · 7 días ' + fS(d.var_7d) + ' m'),
+      line(null, 'Estado: ' + d.estado),
+    ])).on('mouseleave', () => { t.style.opacity = 0; })
+      .on('click', (event, d) => elegir(d.sitecode));
+  }
+
+  // ---------- evolución ----------
+  let seriesCache = null, seriesFrom = null;
+  const series = (al) => {
+    if (seriesFrom !== al.data) {
+      seriesFrom = al.data;
+      seriesCache = d3.group(al.data.map((r) => ({ sc: Number(r.sitecode), f: r.fecha, d: parseDia(r.fecha), v: Number(r.altura) }))
+        .sort((a, b) => a.d - b.d), (p) => p.sc);
+    }
+    return seriesCache;
+  };
+  const selEst = document.getElementById('evo-estacion');
+  selEst.addEventListener('change', () => dash.setParams({ estacion: Number(selEst.value) }));
+  document.querySelectorAll('#evo-dias button').forEach((b) => b.addEventListener('click', () => dash.setParams({ dias: b.dataset.dias })));
+
+  function drawEvolucion(al, es, ea) {
+    const box = document.getElementById('evo-chart');
+    const nota = document.getElementById('evo-nota');
+    let sc = Number(dash.params().estacion) || 34;
+    if (es.status === 'ok' && !es.data.some((e) => Number(e.sitecode) === sc)) sc = 34;
+    const dias = String(dash.params().dias || 'todo');
+    document.querySelectorAll('#evo-dias button').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.dias === dias)));
+
+    if (es.status === 'ok') {
+      const groups = TRAMOS.map((t) => {
+        const og = document.createElement('optgroup'); og.label = t;
+        es.data.filter((e) => e.tramo === t).sort((a, b) => a.orden - b.orden)
+          .forEach((e) => og.append(new Option(e.nombre, String(e.sitecode))));
+        return og;
+      });
+      selEst.replaceChildren(...groups);
+      selEst.value = String(sc);
+    }
+    const est = es.status === 'ok' ? es.data.find((e) => Number(e.sitecode) === sc) : null;
+    document.getElementById('evo-titulo').textContent = est ? 'Evolución en ' + est.nombre : 'Evolución de la altura';
+
+    const fila = ea.status === 'ok' ? ea.data.find((r) => Number(r.sitecode) === sc) : null;
+    document.querySelectorAll('#evo-stats [data-source="estado_actual"]').forEach((n) => {
+      n.setAttribute('data-where', 'sitecode=' + sc);
+      const f = n.dataset.field;
+      const v = fila ? fila[f] : null;
+      n.textContent = !fila ? '–' : f === 'estado' ? v : f === 'altura' ? fM(v) + ' m' : v == null ? '–' : fS(v) + ' m';
+    });
+    document.getElementById('evo-dot').className = 'rh-dot ' + (fila ? CLASE[fila.estado] || 'e-otro' : 'e-otro');
+
+    const s = st(al, es);
+    if (s !== 'ok' || !est) { stateBox(box, s === 'ok' ? 'loading' : s); nota.textContent = ''; return; }
+    box.classList.remove('dash-skeleton');
+    let pts = (series(al).get(sc) || []).slice();
+    if (pts.length && dias !== 'todo') {
+      const desde = pts[pts.length - 1].d - (Number(dias) - 1) * 864e5;
+      pts = pts.filter((p) => p.d >= desde);
+    }
+    if (!pts.length) { box.replaceChildren(el('p', 'rh-empty', 'Esta escala no tiene lecturas en el período.')); nota.textContent = ''; return; }
+
+    // cortes donde faltan días
+    const conCortes = [];
+    pts.forEach((p, i) => {
+      if (i && p.d - pts[i - 1].d > 864e5 * 1.5) conCortes.push({ d: new Date(+pts[i - 1].d + 864e5), v: null });
+      conCortes.push(p);
+    });
+
+    const [vmin, vmax] = d3.extent(pts, (p) => p.v);
+    const span = Math.max(vmax - vmin, 0.5);
+    const niveles = [
+      ['Evacuación', est.evacuacion, 'var(--cds-chart-status-critical)'],
+      ['Alerta', est.alerta, 'var(--color-warn)'],
+      ['Aguas bajas', est.aguas_bajas, 'var(--cds-chart-reference)'],
+    ].filter((n) => n[1] != null);
+    const visibles = niveles.filter((n) => n[1] >= vmin - span * 2 && n[1] <= vmax + span * 2);
+    const fuera = niveles.filter((n) => !visibles.includes(n));
+    const notas = [];
+    if (fuera.length) notas.push('Fuera de escala: ' + fuera.map((n) => n[0] + ' ' + fM(n[1]) + ' m').join(', ') + '.');
+    if (!niveles.length) notas.push('Esta escala no tiene niveles de referencia.');
+    if (fila && fila.estado === 'Sin dato reciente') notas.push('La última lectura es del ' + fDiaL(fila.fecha) + '.');
+    nota.textContent = notas.join(' ');
+
+    box.replaceChildren();
+    const W = Math.max(280, box.clientWidth);
+    const H = W < 520 ? 240 : 300;
+    const svg = d3.select(box).append('svg').attr('width', '100%').attr('viewBox', `0 0 ${W} ${H}`).attr('role', 'img')
+      .attr('aria-label', 'Altura diaria de ' + est.nombre);
+    const yDom = d3.extent([vmin, vmax, ...visibles.map((n) => n[1])]);
+    const ypad = Math.max(0.1, (yDom[1] - yDom[0]) * 0.08);
+    const mt = 14, mb = 28;
+    const y = d3.scaleLinear([yDom[0] - ypad, yDom[1] + ypad], [H - mb, mt]).nice();
+    const yTicks = y.ticks(Math.max(3, Math.floor((H - mt - mb) / 48)));
+    const ml = d3.max(yTicks, (v) => textW(svg, minus(nf1.format(v)))) + 10;
+    const last = pts[pts.length - 1];
+    const etiquetas = [{ y: y(last.v), text: fM(last.v) + ' m', fill: 'var(--color-fg)', w: 500 }]
+      .concat(visibles.map((n) => ({ y: y(n[1]), text: n[0] + ' ' + fM(n[1]), fill: 'var(--color-fg-muted)', w: 400 })));
+    const mr = d3.max(etiquetas, (e) => textW(svg, e.text)) + 16;
+    const x = d3.scaleUtc(d3.extent(pts, (p) => p.d), [ml, W - mr]);
+
+    svg.append('g').selectAll('line').data(yTicks).join('line').attr('x1', ml).attr('x2', W - mr)
+      .attr('y1', (v) => y(v)).attr('y2', (v) => y(v)).attr('stroke', 'var(--cds-chart-grid)');
+    svg.append('g').selectAll('text').data(yTicks).join('text').attr('x', ml - 8).attr('y', (v) => y(v)).attr('dy', '0.35em')
+      .attr('text-anchor', 'end').attr('font-size', 11).attr('fill', 'var(--color-fg-muted)').text((v) => minus(nf1.format(v)));
+    const xa = svg.append('g').attr('transform', `translate(0,${H - mb})`)
+      .call(d3.axisBottom(x).ticks(Math.max(2, Math.floor((W - ml - mr) / 80))).tickFormat((d) => d.getUTCDate() + ' ' + MES[d.getUTCMonth()]).tickSizeOuter(0));
+    xa.attr('font-size', null).attr('font-family', null);
+    xa.select('.domain').attr('stroke', 'var(--cds-chart-axis)');
+    xa.selectAll('.tick line').attr('stroke', 'var(--cds-chart-axis)');
+    xa.selectAll('.tick text').attr('fill', 'var(--color-fg-muted)').attr('font-size', 11);
+
+    visibles.forEach((n) => svg.append('line').attr('x1', ml).attr('x2', W - mr).attr('y1', y(n[1])).attr('y2', y(n[1]))
+      .attr('stroke', n[2]).attr('stroke-width', 1.5).attr('stroke-dasharray', '5 4'));
+
+    svg.append('path').datum(conCortes).attr('fill', 'none').attr('stroke', dash.colors[0]).attr('stroke-width', 2)
+      .attr('stroke-linejoin', 'round').attr('stroke-linecap', 'round')
+      .attr('d', d3.line().defined((p) => p.v != null).x((p) => x(p.d)).y((p) => y(p.v)));
+    svg.append('circle').attr('cx', x(last.d)).attr('cy', y(last.v)).attr('r', 4).attr('fill', dash.colors[0])
+      .attr('stroke', 'var(--color-panel)').attr('stroke-width', 2);
+
+    // etiquetas a la derecha sin pisarse
+    etiquetas.sort((a, b) => a.y - b.y);
+    for (let i = 1; i < etiquetas.length; i++) if (etiquetas[i].y - etiquetas[i - 1].y < 14) etiquetas[i].y = etiquetas[i - 1].y + 14;
+    const over = etiquetas.length ? etiquetas[etiquetas.length - 1].y - (H - mb) : 0;
+    if (over > 0) etiquetas.forEach((e) => { e.y -= over; });
+    svg.append('g').selectAll('text').data(etiquetas).join('text').attr('x', W - mr + 8).attr('y', (e) => e.y).attr('dy', '0.35em')
+      .attr('font-size', 12).attr('font-weight', (e) => e.w).attr('fill', (e) => e.fill).style('font-variant-numeric', 'tabular-nums')
+      .text((e) => e.text);
+
+    // lectura al pasar el puntero
+    const t = tip(box);
+    const rule = svg.append('line').attr('y1', mt).attr('y2', H - mb).attr('stroke', 'var(--cds-chart-axis)').attr('opacity', 0);
+    const dot = svg.append('circle').attr('r', 4.5).attr('fill', dash.colors[0]).attr('stroke', 'var(--color-panel)').attr('stroke-width', 2).attr('opacity', 0);
+    const bis = d3.bisector((p) => p.d).center;
+    svg.append('rect').attr('x', ml).attr('y', mt).attr('width', Math.max(0, W - mr - ml)).attr('height', H - mt - mb).attr('fill', 'transparent')
+      .on('mousemove', (event) => {
+        const [mx] = d3.pointer(event);
+        const i = bis(pts, x.invert(mx));
+        const p = pts[i]; const prev = pts[i - 1];
+        rule.attr('x1', x(p.d)).attr('x2', x(p.d)).attr('opacity', 1);
+        dot.attr('cx', x(p.d)).attr('cy', y(p.v)).attr('opacity', 1);
+        const lines = [line('t-h', fDiaL(p.f)), line('t-n', fM(p.v) + ' m')];
+        if (prev && p.d - prev.d < 864e5 * 1.5) lines.push(line(null, fS(Math.round((p.v - prev.v) * 100) / 100) + ' m respecto del día anterior'));
+        if (est.alerta != null) lines.push(line(null, fS(Math.round((p.v - est.alerta) * 100) / 100) + ' m respecto del alerta'));
+        showTip(box, t, event, lines);
+      })
+      .on('mouseleave', () => { t.style.opacity = 0; rule.attr('opacity', 0); dot.attr('opacity', 0); });
+  }
+
+  // ---------- tabla ----------
+  const buscar = document.getElementById('tabla-buscar');
+  const fTramo = document.getElementById('tabla-tramo');
+  const fEstado = document.getElementById('tabla-estado');
+  fTramo.replaceChildren(new Option('Todos los tramos', ''), ...TRAMOS.map((t) => new Option(t, t)));
+  fEstado.replaceChildren(new Option('Todos los estados', ''), ...ESTADOS.map((e) => new Option(e, e)));
+  let orden = { k: null, dir: 1 };
+  let ultimo = { ea: null, al: null };
+  const thead = document.querySelectorAll('#tabla-escalas th[data-k]');
+  thead.forEach((th) => th.querySelector('button').addEventListener('click', () => {
+    const k = th.dataset.k;
+    orden = orden.k === k ? { k, dir: -orden.dir } : { k, dir: ['nombre', 'rio', 'provincia', 'estado', 'fecha'].includes(k) ? 1 : -1 };
+    drawTabla(ultimo.ea, ultimo.al);
+  }));
+  [buscar, fTramo, fEstado].forEach((n) => n.addEventListener(n === buscar ? 'input' : 'change', () => drawTabla(ultimo.ea, ultimo.al)));
+  document.querySelector('#tabla-escalas tbody').addEventListener('click', (event) => {
+    const tr = event.target.closest('tr[data-key]');
+    if (tr) elegir(tr.dataset.key);
+  });
+
+  const spark = (pts) => {
+    const W = 96, H = 22;
+    const svg = d3.create('svg').attr('width', W).attr('height', H).attr('viewBox', `0 0 ${W} ${H}`).attr('aria-hidden', 'true');
+    if (pts.length < 2) return svg.node();
+    const x = d3.scaleUtc(d3.extent(pts, (p) => p.d), [2, W - 4]);
+    const ext = d3.extent(pts, (p) => p.v);
+    const y = d3.scaleLinear(ext[1] - ext[0] < 0.2 ? [ext[0] - 0.1, ext[1] + 0.1] : ext, [H - 3, 3]);
+    svg.append('path').attr('fill', 'none').attr('stroke', dash.colors[0]).attr('stroke-width', 1.5).attr('stroke-linejoin', 'round')
+      .attr('stroke-linecap', 'round').attr('d', d3.line().x((p) => x(p.d)).y((p) => y(p.v))(pts));
+    const l = pts[pts.length - 1];
+    svg.append('circle').attr('cx', x(l.d)).attr('cy', y(l.v)).attr('r', 2.25).attr('fill', dash.colors[0]);
+    return svg.node();
+  };
+
+  function drawTabla(ea, al) {
+    const tbody = document.querySelector('#tabla-escalas tbody');
+    if (!ea || ea.status !== 'ok') {
+      const td = el('td', null); td.colSpan = 12;
+      if (ea && st(ea) === 'error') td.append(el('div', 'rh-fail', 'No se pudo cargar')); else td.className = 'dash-skeleton';
+      tbody.replaceChildren(el('tr')); tbody.firstChild.append(td);
+      return;
+    }
+    const q = buscar.value.trim().toLowerCase();
+    const rank = (r) => ESTADOS.indexOf(r.estado);
+    let rows = ea.data.filter((r) => (!fTramo.value || r.tramo === fTramo.value) && (!fEstado.value || r.estado === fEstado.value)
+      && (!q || (r.nombre + ' ' + r.rio + ' ' + r.provincia + ' ' + r.tramo).toLowerCase().includes(q)));
+    const k = orden.k;
+    rows = rows.slice().sort((a, b) => {
+      if (!k) return a.orden - b.orden;
+      const va = k === 'estado' ? rank(a) : a[k], vb = k === 'estado' ? rank(b) : b[k];
+      if (va == null && vb == null) return a.orden - b.orden;
+      if (va == null) return 1; if (vb == null) return -1;
+      return (typeof va === 'string' ? va.localeCompare(vb, 'es') : va - vb) * orden.dir || a.orden - b.orden;
+    });
+    thead.forEach((th) => th.setAttribute('aria-sort', th.dataset.k === k ? (orden.dir > 0 ? 'ascending' : 'descending') : 'none'));
+    const ser = al && al.status === 'ok' ? series(al) : null;
+    const trs = rows.map((r) => {
+      const tr = el('tr'); tr.dataset.key = String(r.sitecode);
+      const est = el('span', 'est'); est.append(el('span', 'rh-dot ' + (CLASE[r.estado] || 'e-otro')), r.estado);
+      const cells = [
+        el('td', 'name', r.nombre), el('td', 'c-sec', r.rio), el('td', 'c-sec', r.provincia),
+        el('td', 'n', fM(r.altura)), el('td', 'n', fS(r.var_24h)), el('td', 'n c-ter', fS(r.var_7d)),
+        el('td', 'n c-ter', fM(r.alerta)), el('td', 'n c-ter', fM(r.evacuacion)), el('td', 'n c-sec', fM(r.aguas_bajas)),
+        el('td', null), el('td', 'c-sec', r.fecha ? fDia(r.fecha) : '–'), el('td', 'c-sec spark'),
+      ];
+      cells[9].append(est);
+      if (ser) {
+        const pts = (ser.get(Number(r.sitecode)) || []);
+        const desde = pts.length ? pts[pts.length - 1].d - 29 * 864e5 : 0;
+        cells[11].append(spark(pts.filter((p) => p.d >= desde)));
+      }
+      tr.append(...cells);
+      return tr;
+    });
+    tbody.replaceChildren(...trs);
+    if (!trs.length) { const tr = el('tr'); const td = el('td', 'rh-empty', 'Ninguna escala coincide con la búsqueda.'); td.colSpan = 12; tr.append(td); tbody.append(tr); }
+  }
+
+  // ---------- dibujo ----------
+  let primera = true;
+  const hashInicial = location.hash;
+  dash.onData(() => {
+    const es = dash.data('estaciones'), al = dash.data('alturas');
+    const ea = dash.data('estado_actual'), rs = dash.data('resumen');
+    ultimo = { ea, al };
+    drawResumen(rs, ea);
+    drawAtencion(ea);
+    drawPerfil(ea);
+    drawEvolucion(al, es, ea);
+    drawTabla(ea, al);
+    if (primera && st(ea, al) === 'ok') {
+      primera = false;
+      const named = hashInicial && document.getElementById(hashInicial.slice(1));
+      if (named) named.scrollIntoView();
+    }
+  });
+
+  const io = new IntersectionObserver((entries) => entries.forEach((en) => { if (en.isIntersecting) dash.setLink(en.target.id); }),
+    { root: document, rootMargin: '-35% 0px -60% 0px' });
+  // Se empieza a seguir la sección visible recién después de la carga: si el link cambia antes,
+  // el navegador salta a esa sección al terminar de cargar.
+  const observar = () => ['indicadores', 'atencion', 'perfil', 'evolucion', 'tabla'].forEach((id) => io.observe(document.getElementById(id)));
+  if (document.readyState === 'complete') setTimeout(observar, 0); else window.addEventListener('load', () => setTimeout(observar, 0));
+})();
+</script>
+
+<script>
+(() => {
+  const MESL = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'];
+  fetch('data/meta.json', { cache: 'no-cache' }).then((r) => r.json()).then((m) => {
+    const d = new Date(m.actualizado);
+    if (isNaN(d)) return;
+    const f = new Intl.DateTimeFormat('es-AR', { timeZone: 'America/Argentina/Cordoba', day: 'numeric', month: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit', hour12: false }).formatToParts(d);
+    const p = Object.fromEntries(f.map((x) => [x.type, x.value]));
+    document.getElementById('actualizado').textContent = 'Actualizado el ' + p.day + ' de ' + MESL[Number(p.month) - 1] + ' a las ' + p.hour + ':' + p.minute + '.';
+  }).catch(() => {});
+})();
+</script>
+</main>
+</body>
+</html>
