@@ -137,7 +137,7 @@ Para revisar la página con Playwright: servir `site/` y abrirla en claro, en os
 ## Estilo de escritura
 
 - Todo el texto de la página, los commits y la documentación va en español rioplatense con voseo ("tocá", "consultá").
-- No usar la raya (—) en ningún texto, ni la coma antes de la "y" final en enumeraciones en inglés. Evitar las palabras "crucial", "clave" y "emocionado".
+- No usar la raya ni el guion largo (U+2014) en ningún texto, ni la coma antes de la "y" final en enumeraciones en inglés. Evitar las palabras "crucial", "clave" y "emocionado".
 - Explicaciones concretas y breves, sin párrafos de resumen al final.
 - Mensajes de commit en español, en imperativo y descriptivos ("Sumar pronósticos del INA…").
 - No poner datos personales del dueño más allá de la firma "Hecho por Guillermo Leale con Claude" del pie.
