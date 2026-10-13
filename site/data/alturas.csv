@@ -4711,7 +4711,7 @@ sitecode,escala,tramo,rio,provincia,fecha,altura_m,nivel_alerta_m,nivel_evacuaci
 52,San Fernando,Delta y Río de la Plata,Luján,Buenos Aires,2026-10-10,1.02,3.0,3.5,0.33
 52,San Fernando,Delta y Río de la Plata,Luján,Buenos Aires,2026-10-11,1.24,3.0,3.5,0.33
 52,San Fernando,Delta y Río de la Plata,Luján,Buenos Aires,2026-10-12,1.37,3.0,3.5,0.33
-52,San Fernando,Delta y Río de la Plata,Luján,Buenos Aires,2026-10-13,1.5,3.0,3.5,0.33
+52,San Fernando,Delta y Río de la Plata,Luján,Buenos Aires,2026-10-13,1.4,3.0,3.5,0.33
 53,San Isidro,Delta y Río de la Plata,Río de la Plata,Buenos Aires,2026-07-01,0.7,3.0,3.5,0.3
 53,San Isidro,Delta y Río de la Plata,Río de la Plata,Buenos Aires,2026-07-02,2.4,3.0,3.5,0.3
 53,San Isidro,Delta y Río de la Plata,Río de la Plata,Buenos Aires,2026-07-03,0.95,3.0,3.5,0.3
@@ -5862,7 +5862,7 @@ sitecode,escala,tramo,rio,provincia,fecha,altura_m,nivel_alerta_m,nivel_evacuaci
 65,San Javier,Uruguay,Uruguay,Misiones,2026-10-08,4.25,8.0,10.0,0.82
 65,San Javier,Uruguay,Uruguay,Misiones,2026-10-09,5.14,8.0,10.0,0.82
 65,San Javier,Uruguay,Uruguay,Misiones,2026-10-10,4.9,8.0,10.0,0.82
-65,San Javier,Uruguay,Uruguay,Misiones,2026-10-11,6.45,8.0,10.0,0.82
+65,San Javier,Uruguay,Uruguay,Misiones,2026-10-11,5.72,8.0,10.0,0.82
 65,San Javier,Uruguay,Uruguay,Misiones,2026-10-12,6.54,8.0,10.0,0.82
 65,San Javier,Uruguay,Uruguay,Misiones,2026-10-13,6.58,8.0,10.0,0.82
 66,Puerto Concepción,Uruguay,Uruguay,Misiones,2026-07-01,8.2,15.5,16.5,0.904
@@ -6072,7 +6072,7 @@ sitecode,escala,tramo,rio,provincia,fecha,altura_m,nivel_alerta_m,nivel_evacuaci
 67,Garruchos,Uruguay,Uruguay,Corrientes,2026-10-08,8.2,12.0,14.0,0.03
 67,Garruchos,Uruguay,Uruguay,Corrientes,2026-10-09,7.6,12.0,14.0,0.03
 67,Garruchos,Uruguay,Uruguay,Corrientes,2026-10-10,8.62,12.0,14.0,0.03
-67,Garruchos,Uruguay,Uruguay,Corrientes,2026-10-11,10.25,12.0,14.0,0.03
+67,Garruchos,Uruguay,Uruguay,Corrientes,2026-10-11,9.62,12.0,14.0,0.03
 67,Garruchos,Uruguay,Uruguay,Corrientes,2026-10-12,10.62,12.0,14.0,0.03
 67,Garruchos,Uruguay,Uruguay,Corrientes,2026-10-13,11.08,12.0,14.0,0.03
 68,Santo Tomé,Uruguay,Uruguay,Corrientes,2026-07-01,9.59,11.5,12.5,1.32
@@ -6177,7 +6177,7 @@ sitecode,escala,tramo,rio,provincia,fecha,altura_m,nivel_alerta_m,nivel_evacuaci
 68,Santo Tomé,Uruguay,Uruguay,Corrientes,2026-10-08,9.84,11.5,12.5,1.32
 68,Santo Tomé,Uruguay,Uruguay,Corrientes,2026-10-09,9.26,11.5,12.5,1.32
 68,Santo Tomé,Uruguay,Uruguay,Corrientes,2026-10-10,9.51,11.5,12.5,1.32
-68,Santo Tomé,Uruguay,Uruguay,Corrientes,2026-10-11,10.24,11.5,12.5,1.32
+68,Santo Tomé,Uruguay,Uruguay,Corrientes,2026-10-11,10.01,11.5,12.5,1.32
 68,Santo Tomé,Uruguay,Uruguay,Corrientes,2026-10-12,10.52,11.5,12.5,1.32
 68,Santo Tomé,Uruguay,Uruguay,Corrientes,2026-10-13,10.97,11.5,12.5,1.32
 69,Alvear,Uruguay,Uruguay,Corrientes,2026-07-01,6.21,9.5,11.0,0.89
@@ -6597,7 +6597,7 @@ sitecode,escala,tramo,rio,provincia,fecha,altura_m,nivel_alerta_m,nivel_evacuaci
 72,Paso de los Libres,Uruguay,Uruguay,Corrientes,2026-10-08,8.81,7.5,8.5,0.9
 72,Paso de los Libres,Uruguay,Uruguay,Corrientes,2026-10-09,9.14,7.5,8.5,0.9
 72,Paso de los Libres,Uruguay,Uruguay,Corrientes,2026-10-10,9.2,7.5,8.5,0.9
-72,Paso de los Libres,Uruguay,Uruguay,Corrientes,2026-10-11,9.2,7.5,8.5,0.9
+72,Paso de los Libres,Uruguay,Uruguay,Corrientes,2026-10-11,9.23,7.5,8.5,0.9
 72,Paso de los Libres,Uruguay,Uruguay,Corrientes,2026-10-12,9.26,7.5,8.5,0.9
 72,Paso de los Libres,Uruguay,Uruguay,Corrientes,2026-10-13,9.28,7.5,8.5,0.9
 73,Bompland,Uruguay,Uruguay,Corrientes,2026-07-01,4.4,7.9,10.8,0.0
@@ -7763,7 +7763,7 @@ sitecode,escala,tramo,rio,provincia,fecha,altura_m,nivel_alerta_m,nivel_evacuaci
 85,Buenos Aires,Delta y Río de la Plata,Río de la Plata,Buenos Aires,2026-10-10,0.85,3.3,3.9,0.21
 85,Buenos Aires,Delta y Río de la Plata,Río de la Plata,Buenos Aires,2026-10-11,1.06,3.3,3.9,0.21
 85,Buenos Aires,Delta y Río de la Plata,Río de la Plata,Buenos Aires,2026-10-12,1.21,3.3,3.9,0.21
-85,Buenos Aires,Delta y Río de la Plata,Río de la Plata,Buenos Aires,2026-10-13,1.38,3.3,3.9,0.21
+85,Buenos Aires,Delta y Río de la Plata,Río de la Plata,Buenos Aires,2026-10-13,1.26,3.3,3.9,0.21
 86,La Plata,Delta y Río de la Plata,Río de la Plata,Buenos Aires,2026-07-01,0.49,2.5,2.8,0.3
 86,La Plata,Delta y Río de la Plata,Río de la Plata,Buenos Aires,2026-07-02,2.5,2.5,2.8,0.3
 86,La Plata,Delta y Río de la Plata,Río de la Plata,Buenos Aires,2026-07-03,2.5,2.5,2.8,0.3
