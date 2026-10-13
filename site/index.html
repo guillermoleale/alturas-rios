@@ -110,8 +110,17 @@ td.dash-skeleton { height: 3rem; }
 .rh .rh-map .leaflet-control-attribution a { color: inherit; }
 .rh .rh-map .leaflet-bar a { background: var(--color-panel); color: var(--color-fg); border-bottom-color: var(--color-border-line); }
 .rh .rh-map path.leaflet-interactive:focus { outline: none; }
-.rh .rh-map .leaflet-tile-pane { filter: saturate(.5) brightness(1.04); }
-@media (prefers-color-scheme: dark) { .rh .rh-map .leaflet-tile-pane { filter: invert(1) hue-rotate(180deg) saturate(.4) brightness(.85) contrast(.9); } }
+.rh .rh-map .base-osm { filter: saturate(.5) brightness(1.04); }
+@media (prefers-color-scheme: dark) { .rh .rh-map .base-osm { filter: invert(1) hue-rotate(180deg) saturate(.4) brightness(.85) contrast(.9); } }
+.rh .rh-map .leaflet-control-layers { background: var(--color-panel); color: var(--color-fg); border-radius: var(--cds-radius); font-size: var(--cds-font-size-caption); }
+.rh .rh-map .leaflet-control-layers-expanded { padding: 6px 10px; }
+.rh-sw.line { height: 2px; border-radius: 0; background: var(--series-1); }
+.rh-sw.dash { height: 0; border-radius: 0; border-top: 2px dashed var(--series-1); background: none; }
+.rh-sw.habitual { height: .75rem; border-radius: 2px; background: var(--color-fg); opacity: .12; }
+.rh-sw.lluvia-pas { width: .6rem; height: .75rem; border-radius: 2px; background: var(--series-1); }
+.rh-sw.lluvia-fut { width: .6rem; height: .75rem; border-radius: 2px; background: var(--series-1); opacity: .4; }
+.rh-sw.sudestada { height: .75rem; border-radius: 2px; background: var(--color-warn); opacity: .25; }
+.rh-sw.rafaga { height: 0; border-radius: 0; border-top: 2px dashed var(--cds-chart-reference); background: none; }
 .rh-pop .t-n { font-weight: var(--cds-font-weight-medium); font-size: var(--cds-font-size-body); }
 .rh-pop .t-h { color: var(--color-fg-muted); }
 .rh-pop-btn { font: inherit; margin-top: 6px; padding: 4px 10px; border-radius: 999px; border: 1px solid var(--color-border-line); background: var(--color-fg); color: var(--color-bg); cursor: pointer; }
@@ -246,7 +255,7 @@ td.dash-skeleton { height: 3rem; }
 
   <section class="rh-card" id="mapa">
     <h2>Mapa de escalas</h2>
-    <p class="rh-note">Cada punto es una escala con el color de su estado. Tocá una para ver su altura y su evolución.</p>
+    <p class="rh-note">Cada punto es una escala con el color de su estado. Tocá una para ver su altura y su evolución. Con el selector de capas, arriba a la derecha, podés sumar la imagen satelital y la lluvia estimada de NASA.</p>
     <div class="rh-legend">
       <span><span class="rh-dot e-evac"></span>Evacuación</span>
       <span><span class="rh-dot e-alerta"></span>Alerta</span>
@@ -295,9 +304,40 @@ td.dash-skeleton { height: 3rem; }
       <div class="rh-stat"><div class="k">Variación 7 días</div><div class="v" data-source="estado_actual" data-field="var_7d">–</div></div>
       <div class="rh-stat"><div class="k">Respecto del alerta</div><div class="v" data-source="estado_actual" data-field="margen_alerta">–</div></div>
       <div class="rh-stat"><div class="k">Estado</div><div class="v"><span class="rh-dot" id="evo-dot"></span><span data-source="estado_actual" data-field="estado">–</span></div></div>
+      <div class="rh-stat"><div class="k">Pronóstico INA</div><div class="v" id="evo-pron">–</div></div>
+      <div class="rh-stat"><div class="k">Para la época</div><div class="v" id="evo-epoca">–</div></div>
     </div>
     <div class="rh-chart dash-skeleton" id="evo-chart" data-source="alturas estaciones" style="min-height: 18rem"></div>
+    <div class="rh-legend" id="evo-leyenda"></div>
     <p class="rh-note" id="evo-nota"></p>
+  </section>
+
+  <section class="rh-card" id="lluvia">
+    <h2>Lluvia en la cuenca</h2>
+    <p class="rh-note">Lluvia diaria estimada de la última semana y pronóstico para los próximos 7 días en puntos de la cuenca, de aguas arriba a aguas abajo. Datos de modelos meteorológicos de <a href="https://open-meteo.com/" target="_blank" rel="noopener">Open-Meteo</a> (CC BY 4.0).</p>
+    <p class="rh-take" id="lluvia-resumen"></p>
+    <div class="rh-legend">
+      <span><span class="rh-sw lluvia-pas"></span>Última semana</span>
+      <span><span class="rh-sw lluvia-fut"></span>Pronóstico</span>
+    </div>
+    <div class="rh-chart dash-skeleton" id="lluvia-chart" style="min-height: 12rem"></div>
+  </section>
+
+  <section class="rh-card" id="viento">
+    <div class="rh-head-row">
+      <div>
+        <h2>Viento en el Río de la Plata</h2>
+        <p class="rh-note">Pronóstico horario de viento frente a Buenos Aires. Se sombrean los períodos con viento del sector este a sur de 30 km/h o más durante al menos 6 horas, un criterio orientativo de sudestada, que puede hacer subir el agua en el Delta y la costa. Datos de <a href="https://open-meteo.com/" target="_blank" rel="noopener">Open-Meteo</a> (CC BY 4.0).</p>
+      </div>
+      <div class="rh-ctrl"><button type="button" class="rh-pop-btn" id="viento-sfer" hidden>Ver pronóstico de altura en San Fernando</button></div>
+    </div>
+    <p class="rh-take" id="viento-resumen"></p>
+    <div class="rh-legend">
+      <span><span class="rh-sw line"></span>Viento medio</span>
+      <span><span class="rh-sw rafaga"></span>Ráfagas</span>
+      <span><span class="rh-sw sudestada"></span>Viento del este a sur de 30 km/h o más</span>
+    </div>
+    <div class="rh-chart dash-skeleton" id="viento-chart" style="min-height: 14rem"></div>
   </section>
 
   <section class="rh-card" id="tabla">
@@ -325,6 +365,8 @@ td.dash-skeleton { height: 3rem; }
           <th class="n c-ter" data-field="evacuacion" data-k="evacuacion"><button type="button">Evacuación</button></th>
           <th class="n c-sec" data-field="aguas_bajas" data-k="aguas_bajas"><button type="button">Aguas bajas</button></th>
           <th data-field="estado" data-k="estado"><button type="button">Estado</button></th>
+          <th class="c-sec" data-k="epoca"><button type="button">Para la época</button></th>
+          <th class="n c-sec" data-k="pron_v"><button type="button">Pronóstico INA</button></th>
           <th class="c-sec" data-field="fecha" data-k="fecha"><button type="button">Lectura</button></th>
           <th class="c-sec">Últimos 30 días</th>
         </tr></thead>
@@ -333,7 +375,7 @@ td.dash-skeleton { height: 3rem; }
     </div>
   </section>
 
-  <p class="rh-foot" id="fuente">Fuente: API pública del <a href="https://alerta.ina.gob.ar/pub/datos/" target="_blank" rel="noopener">Sistema de Alerta Hidrológico del INA</a>, red «escalas Prefectura Nacional». Alturas diarias desde el 1 de julio de 2026; niveles de alerta, evacuación y aguas bajas según el INA. Una escala sin lectura en los últimos dos días figura como «sin dato reciente». En el Delta y el Río de la Plata la altura depende de la marea y el viento, así que una lectura diaria puede no captar el pico. Se corrigieron dos errores de carga de la fuente: Empedrado del 22/9 al 2/10 (se usó la lectura de las 0 h) y Libertador el 22/8 (78,91 m, descartado). La página se actualiza sola todos los días.</p>
+  <p class="rh-foot" id="fuente">Fuente: API pública del <a href="https://alerta.ina.gob.ar/pub/datos/" target="_blank" rel="noopener">Sistema de Alerta Hidrológico del INA</a>, red «escalas Prefectura Nacional». Alturas diarias desde el 1 de julio de 2026; niveles de alerta, evacuación y aguas bajas según el INA. Una escala sin lectura en los últimos dos días figura como «sin dato reciente». En el Delta y el Río de la Plata la altura depende de la marea y el viento, así que una lectura diaria puede no captar el pico. Se corrigieron dos errores de carga de la fuente: Empedrado del 22/9 al 2/10 (se usó la lectura de las 0 h) y Libertador el 22/8 (78,91 m, descartado). «Para la época» compara la altura de hoy con la altura media de ese mes en 8 de cada 10 años desde 1970. Pronósticos de altura: INA. Lluvia y viento: <a href="https://open-meteo.com/" target="_blank" rel="noopener">Open-Meteo</a> (CC BY 4.0). Satélite y lluvia en el mapa: <a href="https://earthdata.nasa.gov/gibs" target="_blank" rel="noopener">NASA GIBS</a>. La página se actualiza sola todos los días.</p>
   <p class="rh-foot">Datos: <a href="data/alturas.csv" download>descargar CSV</a>. Código: <a href="https://github.com/guillermoleale/alturas-rios" target="_blank" rel="noopener">github.com/guillermoleale/alturas-rios</a>. Hecho por Guillermo Leale con Claude.</p>
 </div>
 
@@ -605,6 +647,31 @@ dash.calc('resumen', {
       .on('click', (event, d) => elegir(d.sitecode));
   }
 
+  // ---------- pronósticos e historia ----------
+  const DIAS = ['dom', 'lun', 'mar', 'mié', 'jue', 'vie', 'sáb'];
+  const parseT = (s) => new Date((s.length <= 10 ? s + 'T00:00' : s.slice(0, 16)) + ':00Z');
+  const fCorta = (d) => d.getUTCDate() + ' ' + MES[d.getUTCMonth()];
+  const fFechaHora = (d) => {
+    const base = d.getUTCDate() + ' de ' + MESL[d.getUTCMonth()];
+    const h = d.getUTCHours(), m = d.getUTCMinutes();
+    return h || m ? base + ', ' + String(h).padStart(2, '0') + ':' + String(m).padStart(2, '0') + ' h' : base;
+  };
+  const fDiaHora = (d) => DIAS[d.getUTCDay()] + ' ' + d.getUTCDate() + ', ' + d.getUTCHours() + ' h';
+  const pronDe = (pr, sc) => (pr && pr.status === 'ok' && pr.data && pr.data.escalas && pr.data.escalas[String(sc)]) || null;
+  const cliDe = (cl, sc) => (cl && cl.status === 'ok' && cl.data && cl.data.escalas && cl.data.escalas[String(sc)]) || null;
+  const EPOCA_R = { Alta: 0, Habitual: 1, Baja: 2 };
+  const epocaDe = (cli, fecha, v) => {
+    if (!cli || !fecha || v == null) return null;
+    const m = cli.meses[String(Number(fecha.slice(5, 7)))];
+    if (!m) return null;
+    return v > m[2] ? 'Alta' : v < m[0] ? 'Baja' : 'Habitual';
+  };
+  const ultimoPron = (pron, desde) => {
+    if (!pron || !pron.puntos.length) return null;
+    const u = pron.puntos[pron.puntos.length - 1];
+    return desde && parseT(u.t) <= desde ? null : u;
+  };
+
   // ---------- evolución ----------
   let seriesCache = null, seriesFrom = null;
   const series = (al) => {
@@ -619,9 +686,12 @@ dash.calc('resumen', {
   selEst.addEventListener('change', () => dash.setParams({ estacion: Number(selEst.value) }));
   document.querySelectorAll('#evo-dias button').forEach((b) => b.addEventListener('click', () => dash.setParams({ dias: b.dataset.dias })));
 
-  function drawEvolucion(al, es, ea) {
+  function drawEvolucion(al, es, ea, pr, cl) {
     const box = document.getElementById('evo-chart');
     const nota = document.getElementById('evo-nota');
+    const leyenda = document.getElementById('evo-leyenda');
+    const sPron = document.getElementById('evo-pron');
+    const sEpoca = document.getElementById('evo-epoca');
     let sc = Number(dash.params().estacion) || 34;
     if (es.status === 'ok' && !es.data.some((e) => Number(e.sitecode) === sc)) sc = 34;
     const dias = String(dash.params().dias || 'todo');
@@ -648,77 +718,150 @@ dash.calc('resumen', {
       n.textContent = !fila ? '–' : f === 'estado' ? v : f === 'altura' ? fM(v) + ' m' : v == null ? '–' : fS(v) + ' m';
     });
     document.getElementById('evo-dot').className = 'rh-dot ' + (fila ? CLASE[fila.estado] || 'e-otro' : 'e-otro');
+    const pron = pronDe(pr, sc), cli = cliDe(cl, sc);
+    const ep = fila && VIGENTE(fila) ? epocaDe(cli, fila.fecha, fila.altura) : null;
+    sEpoca.textContent = ep ? ep + ' para ' + MESL[Number(fila.fecha.slice(5, 7)) - 1] : '–';
 
     const s = st(al, es);
-    if (s !== 'ok' || !est) { stateBox(box, s === 'ok' ? 'loading' : s); nota.textContent = ''; return; }
+    if (s !== 'ok' || !est) {
+      stateBox(box, s === 'ok' ? 'loading' : s); nota.textContent = ''; leyenda.replaceChildren(); sPron.textContent = '–';
+      return;
+    }
     box.classList.remove('dash-skeleton');
     let pts = (series(al).get(sc) || []).slice();
     if (pts.length && dias !== 'todo') {
       const desde = pts[pts.length - 1].d - (Number(dias) - 1) * 864e5;
       pts = pts.filter((p) => p.d >= desde);
     }
-    if (!pts.length) { box.replaceChildren(el('p', 'rh-empty', 'Esta escala no tiene lecturas en el período.')); nota.textContent = ''; return; }
+    if (!pts.length) {
+      box.replaceChildren(el('p', 'rh-empty', 'Esta escala no tiene lecturas en el período.'));
+      nota.textContent = ''; leyenda.replaceChildren(); sPron.textContent = '–';
+      return;
+    }
+    pts.forEach((p, i) => { p.i = i; });
+    const lastObs = pts[pts.length - 1];
 
-    // cortes donde faltan días
-    const conCortes = [];
-    pts.forEach((p, i) => {
-      if (i && p.d - pts[i - 1].d > 864e5 * 1.5) conCortes.push({ d: new Date(+pts[i - 1].d + 864e5), v: null });
-      conCortes.push(p);
-    });
+    // pronóstico vigente: el que todavía tiene fechas después de la última lectura
+    let fpts = pron ? pron.puntos.map((p) => ({ d: parseT(p.t), v: p.v, lo: p.lo, hi: p.hi })) : [];
+    const pronVencido = fpts.length > 0 && fpts[fpts.length - 1].d <= lastObs.d;
+    if (pronVencido) fpts = [];
+    fpts = fpts.filter((p) => p.d >= pts[0].d);
+    const lastF = fpts[fpts.length - 1];
+    sPron.textContent = lastF ? fM(lastF.v) + ' m al ' + fCorta(lastF.d) : 'Sin pronóstico';
 
-    const [vmin, vmax] = d3.extent(pts, (p) => p.v);
+    const vals = pts.map((p) => p.v).concat(fpts.flatMap((p) => [p.v, p.lo, p.hi]).filter((v) => v != null));
+    const [vmin, vmax] = d3.extent(vals);
     const span = Math.max(vmax - vmin, 0.5);
+    const enRango = (v) => v >= vmin - span * 2 && v <= vmax + span * 2;
     const niveles = [
       ['Evacuación', est.evacuacion, 'var(--cds-chart-status-critical)'],
       ['Alerta', est.alerta, 'var(--color-warn)'],
       ['Aguas bajas', est.aguas_bajas, 'var(--cds-chart-reference)'],
     ].filter((n) => n[1] != null);
-    const visibles = niveles.filter((n) => n[1] >= vmin - span * 2 && n[1] <= vmax + span * 2);
+    const visibles = niveles.filter((n) => enRango(n[1]));
     const fuera = niveles.filter((n) => !visibles.includes(n));
+
+    // rango habitual por mes calendario
+    const x0 = pts[0].d, x1 = lastF ? lastF.d : lastObs.d;
+    const bandas = [];
+    if (cli) {
+      let cur = new Date(Date.UTC(x0.getUTCFullYear(), x0.getUTCMonth(), 1));
+      while (cur <= x1) {
+        const sig = new Date(Date.UTC(cur.getUTCFullYear(), cur.getUTCMonth() + 1, 1));
+        const m = cli.meses[String(cur.getUTCMonth() + 1)];
+        const a = cur < x0 ? x0 : cur, b = sig > x1 ? x1 : sig;
+        if (m && b > a) bandas.push({ a, b, p10: m[0], p50: m[1], p90: m[2] });
+        cur = sig;
+      }
+    }
+
     const notas = [];
     if (fuera.length) notas.push('Fuera de escala: ' + fuera.map((n) => n[0] + ' ' + fM(n[1]) + ' m').join(', ') + '.');
     if (!niveles.length) notas.push('Esta escala no tiene niveles de referencia.');
     if (fila && fila.estado === 'Sin dato reciente') notas.push('La última lectura es del ' + fDiaL(fila.fecha) + '.');
+    if (pron && lastF) notas.push('Pronóstico del INA emitido el ' + fFechaHora(parseT(pron.emitido)) + '.');
+    if (pron && pronVencido) notas.push('El último pronóstico del INA para esta escala, del ' + fFechaHora(parseT(pron.emitido)) + ', ya quedó atrás.');
+    if (bandas.length) notas.push('La banda gris muestra la altura media del mes en 8 de cada 10 años entre ' + cli.desde + ' y ' + cli.hasta + '.');
     nota.textContent = notas.join(' ');
+
+    const items = [['line', 'Altura observada']];
+    if (lastF) items.push(['dash', fpts.some((p) => p.lo != null) ? 'Pronóstico del INA y su rango' : 'Pronóstico del INA']);
+    if (bandas.length) items.push(['habitual', 'Rango habitual del mes']);
+    leyenda.replaceChildren(...items.map(([k, t]) => { const n = el('span'); n.append(el('span', 'rh-sw ' + k), t); return n; }));
 
     box.replaceChildren();
     const W = Math.max(280, box.clientWidth);
     const H = W < 520 ? 240 : 300;
     const svg = d3.select(box).append('svg').attr('width', '100%').attr('viewBox', `0 0 ${W} ${H}`).attr('role', 'img')
       .attr('aria-label', 'Altura diaria de ' + est.nombre);
-    const yDom = d3.extent([vmin, vmax, ...visibles.map((n) => n[1])]);
+    const bandVals = bandas.flatMap((b) => [b.p10, b.p90]).filter(enRango);
+    const yDom = d3.extent([vmin, vmax, ...visibles.map((n) => n[1]), ...bandVals]);
     const ypad = Math.max(0.1, (yDom[1] - yDom[0]) * 0.08);
     const mt = 14, mb = 28;
     const y = d3.scaleLinear([yDom[0] - ypad, yDom[1] + ypad], [H - mb, mt]).nice();
     const yTicks = y.ticks(Math.max(3, Math.floor((H - mt - mb) / 48)));
     const ml = d3.max(yTicks, (v) => textW(svg, minus(nf1.format(v)))) + 10;
-    const last = pts[pts.length - 1];
-    const etiquetas = [{ y: y(last.v), text: fM(last.v) + ' m', fill: 'var(--color-fg)', w: 500 }]
-      .concat(visibles.map((n) => ({ y: y(n[1]), text: n[0] + ' ' + fM(n[1]), fill: 'var(--color-fg-muted)', w: 400 })));
+    const etiquetas = visibles.map((n) => ({ y: y(n[1]), text: n[0] + ' ' + fM(n[1]), fill: 'var(--color-fg-muted)', w: 400 }));
+    if (lastF) etiquetas.push({ y: y(lastF.v), text: 'Pronóstico ' + fM(lastF.v), fill: 'var(--color-fg)', w: 500 });
+    else etiquetas.push({ y: y(lastObs.v), text: fM(lastObs.v) + ' m', fill: 'var(--color-fg)', w: 500 });
     const mr = d3.max(etiquetas, (e) => textW(svg, e.text)) + 16;
-    const x = d3.scaleUtc(d3.extent(pts, (p) => p.d), [ml, W - mr]);
+    const x = d3.scaleUtc([x0, x1 > x0 ? x1 : new Date(+x0 + 864e5)], [ml, W - mr]);
 
+    svg.append('defs').append('clipPath').attr('id', 'evo-clip').append('rect')
+      .attr('x', ml).attr('y', mt).attr('width', Math.max(0, W - mr - ml)).attr('height', H - mt - mb);
     svg.append('g').selectAll('line').data(yTicks).join('line').attr('x1', ml).attr('x2', W - mr)
       .attr('y1', (v) => y(v)).attr('y2', (v) => y(v)).attr('stroke', 'var(--cds-chart-grid)');
     svg.append('g').selectAll('text').data(yTicks).join('text').attr('x', ml - 8).attr('y', (v) => y(v)).attr('dy', '0.35em')
       .attr('text-anchor', 'end').attr('font-size', 11).attr('fill', 'var(--color-fg-muted)').text((v) => minus(nf1.format(v)));
     const xa = svg.append('g').attr('transform', `translate(0,${H - mb})`)
-      .call(d3.axisBottom(x).ticks(Math.max(2, Math.floor((W - ml - mr) / 80))).tickFormat((d) => d.getUTCDate() + ' ' + MES[d.getUTCMonth()]).tickSizeOuter(0));
+      .call(d3.axisBottom(x).ticks(Math.max(2, Math.floor((W - ml - mr) / 80))).tickFormat((d) => fCorta(d)).tickSizeOuter(0));
     xa.attr('font-size', null).attr('font-family', null);
     xa.select('.domain').attr('stroke', 'var(--cds-chart-axis)');
     xa.selectAll('.tick line').attr('stroke', 'var(--cds-chart-axis)');
     xa.selectAll('.tick text').attr('fill', 'var(--color-fg-muted)').attr('font-size', 11);
 
+    const gc = svg.append('g').attr('clip-path', 'url(#evo-clip)');
+    gc.selectAll('rect.hab').data(bandas).join('rect').attr('class', 'hab')
+      .attr('x', (b) => x(b.a)).attr('width', (b) => Math.max(0, x(b.b) - x(b.a)))
+      .attr('y', (b) => y(b.p90)).attr('height', (b) => Math.max(0, y(b.p10) - y(b.p90)))
+      .attr('fill', 'var(--color-fg)').attr('fill-opacity', 0.06);
+    gc.selectAll('line.med').data(bandas).join('line').attr('class', 'med')
+      .attr('x1', (b) => x(b.a)).attr('x2', (b) => x(b.b)).attr('y1', (b) => y(b.p50)).attr('y2', (b) => y(b.p50))
+      .attr('stroke', 'var(--cds-chart-reference)').attr('stroke-width', 1).attr('stroke-dasharray', '2 3');
+
     visibles.forEach((n) => svg.append('line').attr('x1', ml).attr('x2', W - mr).attr('y1', y(n[1])).attr('y2', y(n[1]))
       .attr('stroke', n[2]).attr('stroke-width', 1.5).attr('stroke-dasharray', '5 4'));
 
+    if (fpts.length) {
+      svg.append('line').attr('x1', x(lastObs.d)).attr('x2', x(lastObs.d)).attr('y1', mt).attr('y2', H - mb)
+        .attr('stroke', 'var(--cds-chart-axis)').attr('stroke-dasharray', '2 3');
+      svg.append('text').attr('x', x(lastObs.d) + 4).attr('y', mt + 9).attr('font-size', 11).attr('fill', 'var(--color-fg-muted)').text('último dato');
+      gc.append('path').datum(fpts).attr('fill', dash.colors[0]).attr('fill-opacity', 0.14)
+        .attr('d', d3.area().x((p) => x(p.d)).y0((p) => y(p.lo ?? p.v)).y1((p) => y(p.hi ?? p.v)));
+      const horario = fpts.length > 30;
+      gc.append('path').datum(fpts).attr('fill', 'none').attr('stroke', dash.colors[0]).attr('stroke-width', horario ? 1.25 : 2)
+        .attr('stroke-dasharray', horario ? null : '5 4').attr('d', d3.line().x((p) => x(p.d)).y((p) => y(p.v)));
+      if (fpts.length <= 30) {
+        gc.selectAll('circle.pron').data(fpts).join('circle').attr('class', 'pron').attr('cx', (p) => x(p.d)).attr('cy', (p) => y(p.v))
+          .attr('r', 3).attr('fill', 'var(--color-panel)').attr('stroke', dash.colors[0]).attr('stroke-width', 1.5);
+      }
+    }
+
+    const conCortes = [];
+    pts.forEach((p, i) => {
+      if (i && p.d - pts[i - 1].d > 864e5 * 1.5) conCortes.push({ d: new Date(+pts[i - 1].d + 864e5), v: null });
+      conCortes.push(p);
+    });
     svg.append('path').datum(conCortes).attr('fill', 'none').attr('stroke', dash.colors[0]).attr('stroke-width', 2)
       .attr('stroke-linejoin', 'round').attr('stroke-linecap', 'round')
       .attr('d', d3.line().defined((p) => p.v != null).x((p) => x(p.d)).y((p) => y(p.v)));
-    svg.append('circle').attr('cx', x(last.d)).attr('cy', y(last.v)).attr('r', 4).attr('fill', dash.colors[0])
+    svg.append('circle').attr('cx', x(lastObs.d)).attr('cy', y(lastObs.v)).attr('r', 4).attr('fill', dash.colors[0])
       .attr('stroke', 'var(--color-panel)').attr('stroke-width', 2);
+    if (lastF) {
+      svg.append('text').attr('x', x(lastObs.d) - 7).attr('y', y(lastObs.v) - 9).attr('text-anchor', 'end').attr('font-size', 12)
+        .attr('font-weight', 500).attr('fill', 'var(--color-fg)').style('font-variant-numeric', 'tabular-nums').text(fM(lastObs.v) + ' m');
+    }
 
-    // etiquetas a la derecha sin pisarse
     etiquetas.sort((a, b) => a.y - b.y);
     for (let i = 1; i < etiquetas.length; i++) if (etiquetas[i].y - etiquetas[i - 1].y < 14) etiquetas[i].y = etiquetas[i - 1].y + 14;
     const over = etiquetas.length ? etiquetas[etiquetas.length - 1].y - (H - mb) : 0;
@@ -727,7 +870,11 @@ dash.calc('resumen', {
       .attr('font-size', 12).attr('font-weight', (e) => e.w).attr('fill', (e) => e.fill).style('font-variant-numeric', 'tabular-nums')
       .text((e) => e.text);
 
-    // lectura al pasar el puntero
+    // lectura al pasar el puntero: observado y pronóstico en la misma fecha
+    const porT = new Map();
+    pts.forEach((p) => porT.set(+p.d, { d: p.d, obs: p }));
+    fpts.forEach((p) => { const o = porT.get(+p.d) || { d: p.d }; o.pron = p; porT.set(+p.d, o); });
+    const hov = [...porT.values()].sort((a, b) => a.d - b.d);
     const t = tip(box);
     const rule = svg.append('line').attr('y1', mt).attr('y2', H - mb).attr('stroke', 'var(--cds-chart-axis)').attr('opacity', 0);
     const dot = svg.append('circle').attr('r', 4.5).attr('fill', dash.colors[0]).attr('stroke', 'var(--color-panel)').attr('stroke-width', 2).attr('opacity', 0);
@@ -735,14 +882,163 @@ dash.calc('resumen', {
     svg.append('rect').attr('x', ml).attr('y', mt).attr('width', Math.max(0, W - mr - ml)).attr('height', H - mt - mb).attr('fill', 'transparent')
       .on('mousemove', (event) => {
         const [mx] = d3.pointer(event);
-        const i = bis(pts, x.invert(mx));
-        const p = pts[i]; const prev = pts[i - 1];
-        rule.attr('x1', x(p.d)).attr('x2', x(p.d)).attr('opacity', 1);
-        dot.attr('cx', x(p.d)).attr('cy', y(p.v)).attr('opacity', 1);
-        const lines = [line('t-h', fDiaL(p.f)), line('t-n', fM(p.v) + ' m')];
-        if (prev && p.d - prev.d < 864e5 * 1.5) lines.push(line(null, fS(Math.round((p.v - prev.v) * 100) / 100) + ' m respecto del día anterior'));
-        if (est.alerta != null) lines.push(line(null, fS(Math.round((p.v - est.alerta) * 100) / 100) + ' m respecto del alerta'));
+        const h = hov[bis(hov, x.invert(mx))];
+        const vy = h.obs ? h.obs.v : h.pron.v;
+        rule.attr('x1', x(h.d)).attr('x2', x(h.d)).attr('opacity', 1);
+        dot.attr('cx', x(h.d)).attr('cy', y(vy)).attr('opacity', 1);
+        const lines = [line('t-h', fFechaHora(h.d))];
+        if (h.obs) {
+          lines.push(line('t-n', fM(h.obs.v) + ' m'));
+          const prev = pts[h.obs.i - 1];
+          if (prev && h.obs.d - prev.d < 864e5 * 1.5) lines.push(line(null, fS(Math.round((h.obs.v - prev.v) * 100) / 100) + ' m respecto del día anterior'));
+        }
+        if (h.pron) {
+          const r = h.pron.lo != null ? ' (entre ' + fM(h.pron.lo) + ' y ' + fM(h.pron.hi) + ')' : '';
+          lines.push(line(h.obs ? null : 't-n', 'Pronóstico INA: ' + fM(h.pron.v) + ' m' + r));
+        }
+        if (est.alerta != null) lines.push(line(null, fS(Math.round((vy - est.alerta) * 100) / 100) + ' m respecto del alerta'));
         showTip(box, t, event, lines);
+      })
+      .on('mouseleave', () => { t.style.opacity = 0; rule.attr('opacity', 0); dot.attr('opacity', 0); });
+  }
+
+  // ---------- lluvia ----------
+  const nf0 = new Intl.NumberFormat('es-AR', { maximumFractionDigits: 0 });
+  function drawLluvia(me) {
+    const box = document.getElementById('lluvia-chart');
+    const res = document.getElementById('lluvia-resumen');
+    const s = st(me);
+    if (s !== 'ok') { stateBox(box, s); res.textContent = ''; return; }
+    const datos = (me.data && me.data.lluvia) || [];
+    if (!datos.length) { box.classList.remove('dash-skeleton'); box.replaceChildren(el('p', 'rh-empty', 'Sin datos de lluvia.')); return; }
+    box.classList.remove('dash-skeleton');
+    const hoy = me.data.hoy;
+    const masPas = datos.slice().sort((a, b) => b.ultimos7 - a.ultimos7)[0];
+    const masFut = datos.slice().sort((a, b) => b.proximos7 - a.proximos7)[0];
+    res.textContent = 'En la última semana la mayor lluvia estimada fue en ' + masPas.nombre + ', con ' + nf0.format(masPas.ultimos7) + ' mm. '
+      + (masFut.proximos7 < 5 ? 'No se espera lluvia importante en la cuenca en los próximos 7 días.'
+        : 'Para los próximos 7 días se esperan hasta ' + nf0.format(masFut.proximos7) + ' mm en ' + masFut.nombre + '.');
+
+    box.replaceChildren();
+    const W = Math.max(280, box.clientWidth);
+    const angosto = W < 560;
+    const svg = d3.select(box).append('svg').attr('width', '100%');
+    const cab = ['Últimos 7 d', 'Próximos 7 d'];
+    const colW = d3.max(cab, (c) => textW(svg, c)) + 10;
+    const labW = angosto ? 0 : Math.min(W * 0.32, d3.max(datos, (d) => textW(svg, d.nombre)) + 16);
+    const rowH = angosto ? 56 : 36, top = 22, barH = angosto ? 26 : 24;
+    const H = top + datos.length * rowH + 4;
+    svg.attr('viewBox', `0 0 ${W} ${H}`).attr('role', 'img').attr('aria-label', 'Lluvia diaria por punto de la cuenca');
+    const bx1 = W - colW * 2 - 8;
+    const n = datos[0].dias.length;
+    const x = d3.scaleBand(d3.range(n), [labW, bx1]).paddingInner(0.2);
+    const ymax = Math.max(10, d3.max(datos, (d) => d3.max(d.dias, (z) => z.mm || 0)));
+    const yh = d3.scaleLinear([0, ymax], [0, barH]);
+    const iHoy = Math.max(0, datos[0].dias.findIndex((z) => z.fecha === hoy));
+    const xHoy = x(iHoy) - (x.step() - x.bandwidth()) / 2;
+    cab.forEach((c, i) => svg.append('text').attr('x', bx1 + colW * (i + 1) + 4).attr('y', 12).attr('text-anchor', 'end')
+      .attr('font-size', 11).attr('fill', 'var(--color-fg-muted)').text(c));
+    svg.append('line').attr('x1', xHoy).attr('x2', xHoy).attr('y1', top - 6).attr('y2', H).attr('stroke', 'var(--cds-chart-axis)').attr('stroke-dasharray', '2 3');
+    svg.append('text').attr('x', xHoy + 4).attr('y', 12).attr('font-size', 11).attr('fill', 'var(--color-fg-muted)').text('hoy');
+    const t = tip(box);
+    datos.forEach((d, i) => {
+      const y0 = top + i * rowH;
+      const base = y0 + rowH - 6;
+      if (angosto) svg.append('text').attr('x', 0).attr('y', y0 + 12).attr('font-size', 12).attr('fill', 'var(--color-fg)').text(d.nombre);
+      else svg.append('text').attr('x', labW - 12).attr('y', base - barH / 2).attr('dy', '0.35em').attr('text-anchor', 'end')
+        .attr('font-size', 12).attr('fill', 'var(--color-fg)').text(d.nombre);
+      svg.append('line').attr('x1', labW).attr('x2', bx1).attr('y1', base + 0.5).attr('y2', base + 0.5).attr('stroke', 'var(--cds-chart-grid)');
+      d.dias.forEach((z, j) => {
+        const mm = z.mm || 0;
+        if (mm > 0) {
+          svg.append('rect').attr('x', x(j)).attr('width', x.bandwidth()).attr('y', base - Math.max(1.5, yh(mm)))
+            .attr('height', Math.max(1.5, yh(mm))).attr('rx', 2).attr('fill', dash.colors[0]).attr('fill-opacity', j < iHoy ? 1 : 0.4);
+        }
+        svg.append('rect').attr('x', x(j) - (x.step() - x.bandwidth()) / 2).attr('width', x.step()).attr('y', y0).attr('height', rowH)
+          .attr('fill', 'transparent')
+          .on('mousemove', (event) => {
+            const f = parseDia(z.fecha);
+            showTip(box, t, event, [line('t-h', d.nombre), line(null, DIAS[f.getUTCDay()] + ' ' + fCorta(f) + (j < iHoy ? ' · estimada' : ' · pronóstico')),
+              line('t-n', nf1.format(mm) + ' mm')]);
+          })
+          .on('mouseleave', () => { t.style.opacity = 0; });
+      });
+      [d.ultimos7, d.proximos7].forEach((v, k) => svg.append('text').attr('x', bx1 + colW * (k + 1) + 4).attr('y', base - 4)
+        .attr('text-anchor', 'end').attr('font-size', 12).attr('font-weight', k === 1 ? 400 : 500)
+        .attr('fill', k === 1 ? 'var(--color-fg-muted)' : 'var(--color-fg)').style('font-variant-numeric', 'tabular-nums')
+        .text(nf0.format(v) + ' mm'));
+    });
+  }
+
+  // ---------- viento ----------
+  const CARD = ['N', 'NNE', 'NE', 'ENE', 'E', 'ESE', 'SE', 'SSE', 'S', 'SSO', 'SO', 'OSO', 'O', 'ONO', 'NO', 'NNO'];
+  const cardinal = (g) => CARD[Math.round(g / 22.5) % 16];
+  const btnSfer = document.getElementById('viento-sfer');
+  btnSfer.addEventListener('click', () => elegir(52));
+  function drawViento(me, pr) {
+    const box = document.getElementById('viento-chart');
+    const res = document.getElementById('viento-resumen');
+    btnSfer.hidden = !ultimoPron(pronDe(pr, 52));
+    const s = st(me);
+    if (s !== 'ok') { stateBox(box, s); res.textContent = ''; return; }
+    const v = me.data && me.data.viento;
+    if (!v || !v.horas || !v.horas.length) { box.classList.remove('dash-skeleton'); box.replaceChildren(el('p', 'rh-empty', 'Sin datos de viento.')); return; }
+    box.classList.remove('dash-skeleton');
+    const hs = v.horas.filter((h) => h.vel != null).map((h) => ({ d: parseT(h.t), vel: h.vel, dir: h.dir, raf: h.raf }));
+    const per = (v.sudestada || []).map((p) => ({ a: parseT(p.desde), b: new Date(+parseT(p.hasta) + 36e5), vel: p.vel_max, raf: p.raf_max }));
+    if (per.length) {
+      const p = per[0];
+      res.textContent = 'Viento del sector este a sur de 30 km/h o más desde el ' + fDiaHora(p.a) + ' hasta el ' + fDiaHora(new Date(+p.b - 36e5))
+        + ', con hasta ' + nf0.format(p.vel) + ' km/h y ráfagas de ' + nf0.format(p.raf) + ' km/h.'
+        + (per.length > 1 ? ' Hay ' + (per.length - 1) + (per.length === 2 ? ' período más' : ' períodos más') + ' así en los próximos días.' : '');
+    } else res.textContent = 'No se espera viento sostenido del sector este a sur en los próximos días.';
+
+    box.replaceChildren();
+    const W = Math.max(280, box.clientWidth);
+    const H = W < 520 ? 230 : 260;
+    const svg = d3.select(box).append('svg').attr('width', '100%').attr('viewBox', `0 0 ${W} ${H}`).attr('role', 'img')
+      .attr('aria-label', 'Pronóstico de viento en ' + v.lugar);
+    const mt = 30, mb = 28;
+    const y = d3.scaleLinear([0, Math.max(45, d3.max(hs, (h) => Math.max(h.vel, h.raf || 0))) * 1.08], [H - mb, mt]).nice();
+    const yTicks = y.ticks(4);
+    const ml = d3.max(yTicks, (t) => textW(svg, String(t))) + 10;
+    const mr = d3.max(['km/h', 'Ráfagas'], (t) => textW(svg, t)) + 14;
+    const x = d3.scaleUtc(d3.extent(hs, (h) => h.d), [ml, W - mr]);
+    svg.append('g').selectAll('rect').data(per).join('rect').attr('x', (p) => x(p.a)).attr('width', (p) => Math.max(0, Math.min(x(p.b), W - mr) - x(p.a)))
+      .attr('y', mt).attr('height', H - mt - mb).attr('fill', 'var(--color-warn)').attr('fill-opacity', 0.14);
+    svg.append('g').selectAll('line').data(yTicks).join('line').attr('x1', ml).attr('x2', W - mr).attr('y1', (t) => y(t)).attr('y2', (t) => y(t))
+      .attr('stroke', 'var(--cds-chart-grid)');
+    svg.append('g').selectAll('text').data(yTicks).join('text').attr('x', ml - 8).attr('y', (t) => y(t)).attr('dy', '0.35em').attr('text-anchor', 'end')
+      .attr('font-size', 11).attr('fill', 'var(--color-fg-muted)').text((t) => t);
+    svg.append('text').attr('x', W - mr + 6).attr('y', y(yTicks[yTicks.length - 1])).attr('dy', '0.35em').attr('font-size', 11).attr('fill', 'var(--color-fg-muted)').text('km/h');
+    svg.append('line').attr('x1', ml).attr('x2', W - mr).attr('y1', y(30)).attr('y2', y(30)).attr('stroke', 'var(--color-warn)')
+      .attr('stroke-dasharray', '5 4').attr('stroke-width', 1.5);
+    const dias = d3.utcDay.range(d3.utcDay.ceil(hs[0].d), hs[hs.length - 1].d);
+    svg.append('g').selectAll('line').data(dias).join('line').attr('x1', (d) => x(d)).attr('x2', (d) => x(d)).attr('y1', mt).attr('y2', H - mb)
+      .attr('stroke', 'var(--cds-chart-axis)').attr('stroke-opacity', 0.6);
+    svg.append('g').selectAll('text').data(dias).join('text').attr('x', (d) => x(d) + 4).attr('y', H - mb + 16).attr('font-size', 11)
+      .attr('fill', 'var(--color-fg-muted)').text((d) => DIAS[d.getUTCDay()] + ' ' + d.getUTCDate());
+    svg.append('line').attr('x1', ml).attr('x2', W - mr).attr('y1', H - mb).attr('y2', H - mb).attr('stroke', 'var(--cds-chart-axis)');
+    svg.append('path').datum(hs.filter((h) => h.raf != null)).attr('fill', 'none').attr('stroke', 'var(--cds-chart-reference)').attr('stroke-width', 1.5)
+      .attr('stroke-dasharray', '3 3').attr('d', d3.line().x((h) => x(h.d)).y((h) => y(h.raf)));
+    svg.append('path').datum(hs).attr('fill', 'none').attr('stroke', dash.colors[0]).attr('stroke-width', 2).attr('stroke-linejoin', 'round')
+      .attr('stroke-linecap', 'round').attr('d', d3.line().x((h) => x(h.d)).y((h) => y(h.vel)));
+    // flechas hacia donde sopla el viento
+    const paso = W < 520 ? 6 : 3;
+    svg.append('g').selectAll('path').data(hs.filter((h, i) => i % paso === 0 && h.dir != null)).join('path')
+      .attr('d', 'M0,-6 L4,4 L0,2 L-4,4 Z').attr('fill', 'var(--color-fg-muted)')
+      .attr('transform', (h) => `translate(${x(h.d)},${mt - 14}) rotate(${(h.dir + 180) % 360})`);
+    const t = tip(box);
+    const rule = svg.append('line').attr('y1', mt).attr('y2', H - mb).attr('stroke', 'var(--cds-chart-axis)').attr('opacity', 0);
+    const dot = svg.append('circle').attr('r', 4).attr('fill', dash.colors[0]).attr('stroke', 'var(--color-panel)').attr('stroke-width', 2).attr('opacity', 0);
+    const bis = d3.bisector((h) => h.d).center;
+    svg.append('rect').attr('x', ml).attr('y', mt - 24).attr('width', Math.max(0, W - mr - ml)).attr('height', H - mt - mb + 24).attr('fill', 'transparent')
+      .on('mousemove', (event) => {
+        const h = hs[bis(hs, x.invert(d3.pointer(event)[0]))];
+        rule.attr('x1', x(h.d)).attr('x2', x(h.d)).attr('opacity', 1);
+        dot.attr('cx', x(h.d)).attr('cy', y(h.vel)).attr('opacity', 1);
+        showTip(box, t, event, [line('t-h', fDiaHora(h.d)), line('t-n', nf0.format(h.vel) + ' km/h del ' + cardinal(h.dir) + ' (' + h.dir + '°)'),
+          line(null, 'Ráfagas ' + (h.raf != null ? nf0.format(h.raf) + ' km/h' : '–'))]);
       })
       .on('mouseleave', () => { t.style.opacity = 0; rule.attr('opacity', 0); dot.attr('opacity', 0); });
   }
@@ -754,14 +1050,14 @@ dash.calc('resumen', {
   fTramo.replaceChildren(new Option('Todos los tramos', ''), ...TRAMOS.map((t) => new Option(t, t)));
   fEstado.replaceChildren(new Option('Todos los estados', ''), ...ESTADOS.map((e) => new Option(e, e)));
   let orden = { k: null, dir: 1 };
-  let ultimo = { ea: null, al: null };
+  let ultimo = { ea: null, al: null, pr: null, cl: null };
   const thead = document.querySelectorAll('#tabla-escalas th[data-k]');
   thead.forEach((th) => th.querySelector('button').addEventListener('click', () => {
     const k = th.dataset.k;
-    orden = orden.k === k ? { k, dir: -orden.dir } : { k, dir: ['nombre', 'rio', 'provincia', 'estado', 'fecha'].includes(k) ? 1 : -1 };
-    drawTabla(ultimo.ea, ultimo.al);
+    orden = orden.k === k ? { k, dir: -orden.dir } : { k, dir: ['nombre', 'rio', 'provincia', 'estado', 'fecha', 'epoca'].includes(k) ? 1 : -1 };
+    drawTabla(ultimo.ea, ultimo.al, ultimo.pr, ultimo.cl);
   }));
-  [buscar, fTramo, fEstado].forEach((n) => n.addEventListener(n === buscar ? 'input' : 'change', () => drawTabla(ultimo.ea, ultimo.al)));
+  [buscar, fTramo, fEstado].forEach((n) => n.addEventListener(n === buscar ? 'input' : 'change', () => drawTabla(ultimo.ea, ultimo.al, ultimo.pr, ultimo.cl)));
   document.querySelector('#tabla-escalas tbody').addEventListener('click', (event) => {
     const tr = event.target.closest('tr[data-key]');
     if (tr) elegir(tr.dataset.key);
@@ -781,22 +1077,30 @@ dash.calc('resumen', {
     return svg.node();
   };
 
-  function drawTabla(ea, al) {
+  function drawTabla(ea, al, pr, cl) {
     const tbody = document.querySelector('#tabla-escalas tbody');
     if (!ea || ea.status !== 'ok') {
-      const td = el('td', null); td.colSpan = 12;
+      const td = el('td', null); td.colSpan = 14;
       if (ea && st(ea) === 'error') td.append(el('div', 'rh-fail', 'No se pudo cargar')); else td.className = 'dash-skeleton';
       tbody.replaceChildren(el('tr')); tbody.firstChild.append(td);
       return;
     }
     const q = buscar.value.trim().toLowerCase();
     const rank = (r) => ESTADOS.indexOf(r.estado);
-    let rows = ea.data.filter((r) => (!fTramo.value || r.tramo === fTramo.value) && (!fEstado.value || r.estado === fEstado.value)
+    const ext = ea.data.map((r) => {
+      const u = VIGENTE(r) ? ultimoPron(pronDe(pr, r.sitecode), parseDia(r.fecha)) : null;
+      return Object.assign({}, r, {
+        epoca: VIGENTE(r) ? epocaDe(cliDe(cl, r.sitecode), r.fecha, r.altura) : null,
+        pron_v: u ? u.v : null, pron_t: u ? u.t : null,
+      });
+    });
+    let rows = ext.filter((r) => (!fTramo.value || r.tramo === fTramo.value) && (!fEstado.value || r.estado === fEstado.value)
       && (!q || (r.nombre + ' ' + r.rio + ' ' + r.provincia + ' ' + r.tramo).toLowerCase().includes(q)));
     const k = orden.k;
     rows = rows.slice().sort((a, b) => {
       if (!k) return a.orden - b.orden;
-      const va = k === 'estado' ? rank(a) : a[k], vb = k === 'estado' ? rank(b) : b[k];
+      const val = (r) => (k === 'estado' ? rank(r) : k === 'epoca' ? (r.epoca == null ? null : EPOCA_R[r.epoca]) : r[k]);
+      const va = val(a), vb = val(b);
       if (va == null && vb == null) return a.orden - b.orden;
       if (va == null) return 1; if (vb == null) return -1;
       return (typeof va === 'string' ? va.localeCompare(vb, 'es') : va - vb) * orden.dir || a.orden - b.orden;
@@ -810,23 +1114,25 @@ dash.calc('resumen', {
         el('td', 'name', r.nombre), el('td', 'c-sec', r.rio), el('td', 'c-sec', r.provincia),
         el('td', 'n', fM(r.altura)), el('td', 'n', fS(r.var_24h)), el('td', 'n c-ter', fS(r.var_7d)),
         el('td', 'n c-ter', fM(r.alerta)), el('td', 'n c-ter', fM(r.evacuacion)), el('td', 'n c-sec', fM(r.aguas_bajas)),
-        el('td', null), el('td', 'c-sec', r.fecha ? fDia(r.fecha) : '–'), el('td', 'c-sec spark'),
+        el('td', null), el('td', 'c-sec', r.epoca || '–'),
+        el('td', 'n c-sec', r.pron_v != null ? fM(r.pron_v) + ' · ' + fCorta(parseT(r.pron_t)) : '–'),
+        el('td', 'c-sec', r.fecha ? fDia(r.fecha) : '–'), el('td', 'c-sec spark'),
       ];
       cells[9].append(est);
       if (ser) {
         const pts = (ser.get(Number(r.sitecode)) || []);
         const desde = pts.length ? pts[pts.length - 1].d - 29 * 864e5 : 0;
-        cells[11].append(spark(pts.filter((p) => p.d >= desde)));
+        cells[13].append(spark(pts.filter((p) => p.d >= desde)));
       }
       tr.append(...cells);
       return tr;
     });
     tbody.replaceChildren(...trs);
-    if (!trs.length) { const tr = el('tr'); const td = el('td', 'rh-empty', 'Ninguna escala coincide con la búsqueda.'); td.colSpan = 12; tr.append(td); tbody.append(tr); }
+    if (!trs.length) { const tr = el('tr'); const td = el('td', 'rh-empty', 'Ninguna escala coincide con la búsqueda.'); td.colSpan = 14; tr.append(td); tbody.append(tr); }
   }
 
   // ---------- mapa ----------
-  let mapa = null, capa = null, mapaDe = null;
+  let mapa = null, capa = null, mapaDe = null, capasListas = false;
   const MCLASE = { 'Evacuación': 'm-evac', 'Alerta': 'm-alerta', 'Normal': 'm-normal', 'Aguas bajas': 'm-bajas' };
   const MRANGO = { 'Evacuación': 4, 'Alerta': 3, 'Aguas bajas': 2, 'Normal': 1 };
   const popup = (r) => {
@@ -843,7 +1149,7 @@ dash.calc('resumen', {
     }
     return d;
   };
-  function drawMapa(ea, es) {
+  function drawMapa(ea, es, cp) {
     const box = document.getElementById('mapa-escalas');
     if (typeof L === 'undefined') { box.replaceChildren(el('div', 'rh-fail', 'No se pudo cargar el mapa')); return; }
     const s = st(ea, es);
@@ -852,7 +1158,7 @@ dash.calc('resumen', {
     if (!mapa) {
       mapa = L.map(box, { scrollWheelZoom: false, zoomSnap: 0.5 });
       L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        maxZoom: 13,
+        maxZoom: 13, className: 'base-osm',
         attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">colaboradores de OpenStreetMap</a>',
       }).addTo(mapa);
       box.addEventListener('click', () => mapa.scrollWheelZoom.enable());
@@ -861,6 +1167,17 @@ dash.calc('resumen', {
       mapa.fitBounds(es.data.map((e) => [e.lat, e.lon]), { padding: [20, 20] });
     }
     mapa.invalidateSize();
+    if (!capasListas && cp && cp.status === 'ok' && cp.data && Array.isArray(cp.data.capas) && cp.data.capas.length) {
+      capasListas = true;
+      const extra = {};
+      cp.data.capas.forEach((c) => {
+        extra[c.nombre] = L.tileLayer(c.url, {
+          maxNativeZoom: c.maxNativeZoom, maxZoom: 13, opacity: c.opacidad,
+          attribution: 'Imágenes: <a href="https://earthdata.nasa.gov/gibs">NASA GIBS</a>',
+        });
+      });
+      L.control.layers(null, extra, { collapsed: box.clientWidth < 700 }).addTo(mapa);
+    }
     if (mapaDe === ea.data) return;
     mapaDe = ea.data;
     capa.clearLayers();
@@ -882,13 +1199,16 @@ dash.calc('resumen', {
   dash.onData(() => {
     const es = dash.data('estaciones'), al = dash.data('alturas');
     const ea = dash.data('estado_actual'), rs = dash.data('resumen');
-    ultimo = { ea, al };
+    const pr = dash.data('pronosticos'), cl = dash.data('climatologia'), me = dash.data('meteo'), cp = dash.data('capas');
+    ultimo = { ea, al, pr, cl };
     drawResumen(rs, ea);
     drawAtencion(ea);
-    drawMapa(ea, es);
+    drawMapa(ea, es, cp);
     drawPerfil(ea);
-    drawEvolucion(al, es, ea);
-    drawTabla(ea, al);
+    drawEvolucion(al, es, ea, pr, cl);
+    drawLluvia(me);
+    drawViento(me, pr);
+    drawTabla(ea, al, pr, cl);
     if (primera && st(ea, al) === 'ok') {
       primera = false;
       const named = hashInicial && document.getElementById(hashInicial.slice(1));
@@ -900,7 +1220,7 @@ dash.calc('resumen', {
     { root: document, rootMargin: '-35% 0px -60% 0px' });
   // Se empieza a seguir la sección visible recién después de la carga: si el link cambia antes,
   // el navegador salta a esa sección al terminar de cargar.
-  const observar = () => ['indicadores', 'atencion', 'mapa', 'perfil', 'evolucion', 'tabla'].forEach((id) => io.observe(document.getElementById(id)));
+  const observar = () => ['indicadores', 'atencion', 'mapa', 'perfil', 'evolucion', 'lluvia', 'viento', 'tabla'].forEach((id) => io.observe(document.getElementById(id)));
   if (document.readyState === 'complete') setTimeout(observar, 0); else window.addEventListener('load', () => setTimeout(observar, 0));
 })();
 </script>

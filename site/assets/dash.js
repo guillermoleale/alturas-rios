@@ -1,7 +1,10 @@
 // Reemplazo mínimo del objeto `dash` del dashboard original: carga los JSON de data/,
 // calcula los valores derivados y redibuja la página cuando cambian los datos, los filtros o el ancho.
 (function () {
-  const SOURCES = { estaciones: 'data/estaciones.json', alturas: 'data/alturas.json' };
+  const SOURCES = {
+    estaciones: 'data/estaciones.json', alturas: 'data/alturas.json', pronosticos: 'data/pronosticos.json',
+    climatologia: 'data/climatologia.json', meteo: 'data/meteo.json', capas: 'data/capas.json',
+  };
   const DEFAULTS = { estacion: 34, dias: 'todo', tramo: null };
   const state = {};
   const calcs = {};
@@ -27,7 +30,7 @@
     state[id] = { status: 'loading', data: [] };
     fetch(SOURCES[id], { cache: 'no-cache' })
       .then((r) => { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
-      .then((d) => { state[id] = { status: 'ok', data: Array.isArray(d) ? d : (d.rows || d.data || []) }; })
+      .then((d) => { state[id] = { status: 'ok', data: d }; })
       .catch((e) => { state[id] = { status: 'error', data: [], message: String(e) }; })
       .finally(() => { Object.keys(cache).forEach((k) => delete cache[k]); notify(); });
   };
