@@ -28,6 +28,9 @@ jobs:
           python-version: "3.12"
       - name: Bajar lecturas nuevas del INA
         run: python scripts/actualizar.py
+      - name: Pronósticos, historia, lluvia, viento y capas
+        continue-on-error: true
+        run: python scripts/extras.py
       - name: Guardar los datos
         run: |
           if git diff --quiet site/data/; then
