@@ -110,6 +110,8 @@ td.dash-skeleton { height: 3rem; }
 .rh .rh-map .leaflet-control-attribution a { color: inherit; }
 .rh .rh-map .leaflet-bar a { background: var(--color-panel); color: var(--color-fg); border-bottom-color: var(--color-border-line); }
 .rh .rh-map path.leaflet-interactive:focus { outline: none; }
+/* Leaflet 1.9 suma los mosaicos con plus-lighter; con zoom fraccionario, el filtro y la opacidad eso deja líneas claras entre mosaicos. */
+.rh .rh-map img.leaflet-tile { mix-blend-mode: normal; }
 .rh .rh-map .base-osm { filter: saturate(.5) brightness(1.04); }
 @media (prefers-color-scheme: dark) { .rh .rh-map .base-osm { filter: invert(1) hue-rotate(180deg) saturate(.4) brightness(.85) contrast(.9); } }
 .rh .rh-map .leaflet-control-layers { background: var(--color-panel); color: var(--color-fg); border-radius: var(--cds-radius); font-size: var(--cds-font-size-caption); }
@@ -120,6 +122,7 @@ td.dash-skeleton { height: 3rem; }
 .rh-sw.lluvia-pas { width: .6rem; height: .75rem; border-radius: 2px; background: var(--series-1); }
 .rh-sw.lluvia-fut { width: .6rem; height: .75rem; border-radius: 2px; background: var(--series-1); opacity: .4; }
 .rh-sw.sudestada { height: .75rem; border-radius: 2px; background: var(--color-warn); opacity: .25; }
+.rh-sw.pron-rango { height: .75rem; border-radius: 2px; background: var(--series-1); opacity: .2; }
 .rh-sw.rafaga { height: 0; border-radius: 0; border-top: 2px dashed var(--cds-chart-reference); background: none; }
 .rh-pop .t-n { font-weight: var(--cds-font-weight-medium); font-size: var(--cds-font-size-body); }
 .rh-pop .t-h { color: var(--color-fg-muted); }
@@ -183,6 +186,23 @@ td.dash-skeleton { height: 3rem; }
 .rh-att-name { display: flex; align-items: center; gap: var(--cds-gap-xs); font-weight: var(--cds-font-weight-medium); }
 .rh-att-line { font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); }
 .rh-att-wrap { min-height: 4rem; }
+.rh-qs { position: relative; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--cds-gap-sm); margin-top: var(--cds-gap-md); min-height: 10rem; }
+@media (min-width: 900px) { .rh-qs { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+.rh-q { font: inherit; text-align: left; color: var(--color-fg); background: transparent; border: 1px solid var(--color-border-line); border-radius: var(--cds-radius); padding: var(--cds-pad-sm) var(--cds-pad-md); cursor: pointer; display: flex; flex-direction: column; gap: 2px; min-width: 0; font-variant-numeric: tabular-nums; }
+.rh-q:hover { border-color: var(--color-fg-muted); }
+.rh-q-name { font-weight: var(--cds-font-weight-medium); }
+.rh-q-big { font-size: var(--cds-font-size-heading); }
+.rh-q-line { font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); min-height: 1.2em; }
+.rh-q-line.fuera { color: var(--color-fg); font-weight: var(--cds-font-weight-medium); }
+.rh-q-chart { display: block; position: relative; margin: 4px 0 2px; }
+@media (max-width: 520px) { .rh-q { padding: var(--cds-pad-sm); } }
+.rh-mas { font: inherit; font-size: var(--cds-font-size-caption); margin-top: var(--cds-gap-sm); padding: var(--cds-pad-xs) var(--cds-pad-md); border: 1px solid var(--color-border-line); border-radius: 999px; background: transparent; color: var(--color-fg); cursor: pointer; }
+.rh-mas:hover { border-color: var(--color-fg-muted); }
+@media (max-width: 520px) {
+  .rh-att { gap: 0; margin-top: var(--cds-gap-xs); }
+  .rh-att-item { border: 0; border-top: 1px solid var(--color-border-line); border-radius: 0; padding: var(--cds-pad-sm) 0; }
+  .rh-att-g { margin-top: var(--cds-gap-md); }
+}
 .rh-ctrl { display: flex; flex-wrap: wrap; gap: var(--cds-gap-sm); align-items: center; }
 .rh-ctrl select, .rh-ctrl input { font: inherit; font-size: var(--cds-font-size-caption); color: var(--color-fg); background: var(--color-bg); border: 1px solid var(--color-border-line); border-radius: var(--cds-radius); padding: var(--cds-pad-xs) var(--cds-pad-sm); max-width: 100%; }
 .rh-ctrl input { min-width: 0; width: 12rem; }
@@ -255,7 +275,7 @@ td.dash-skeleton { height: 3rem; }
 
   <section class="rh-card" id="mapa">
     <h2>Mapa de escalas</h2>
-    <p class="rh-note">Cada punto es una escala con el color de su estado. Tocá una para ver su altura y su evolución. Con el selector de capas, arriba a la derecha, podés sumar la imagen satelital y la lluvia estimada de NASA.</p>
+    <p class="rh-note">Cada punto es una escala con el color de su estado. Tocá una para ver su altura y su evolución. Con el selector de capas, arriba a la derecha, podés sumar la imagen satelital y la lluvia estimada de NASA, que llega con algunas horas de demora: va del verde (lluvia débil) al rojo (intensa), y los celestes y violetas son nieve.</p>
     <div class="rh-legend">
       <span><span class="rh-dot e-evac"></span>Evacuación</span>
       <span><span class="rh-dot e-alerta"></span>Alerta</span>
@@ -323,6 +343,19 @@ td.dash-skeleton { height: 3rem; }
     <div class="rh-chart dash-skeleton" id="lluvia-chart" style="min-height: 12rem"></div>
   </section>
 
+  <section class="rh-card" id="caudales">
+    <h2>Caudales pronosticados</h2>
+    <p class="rh-note">Caudal diario simulado por GloFAS, el modelo global de crecidas de Copernicus, y su pronóstico a 30 días. Es un dato orientativo: el modelo no usa las lecturas de las escalas, puede errar bastante y un caudal no equivale a una altura. Sirve para ver si espera más o menos agua que lo habitual según su propia simulación de 2001 a 2020. Datos de <a href="https://open-meteo.com/en/docs/flood-api" target="_blank" rel="noopener">Open-Meteo</a> (CC BY 4.0).</p>
+    <p class="rh-take" id="caudales-resumen"></p>
+    <div class="rh-legend">
+      <span><span class="rh-sw line"></span>Caudal simulado</span>
+      <span><span class="rh-sw dash"></span>Pronóstico (mediana)</span>
+      <span><span class="rh-sw pron-rango"></span>Rango probable del pronóstico</span>
+      <span><span class="rh-sw habitual"></span>Rango habitual del mes</span>
+    </div>
+    <div class="rh-qs dash-skeleton" id="caudales-lista"></div>
+  </section>
+
   <section class="rh-card" id="viento">
     <div class="rh-head-row">
       <div>
@@ -375,7 +408,7 @@ td.dash-skeleton { height: 3rem; }
     </div>
   </section>
 
-  <p class="rh-foot" id="fuente">Fuente: API pública del <a href="https://alerta.ina.gob.ar/pub/datos/" target="_blank" rel="noopener">Sistema de Alerta Hidrológico del INA</a>, red «escalas Prefectura Nacional». Alturas diarias desde el 1 de julio de 2026; niveles de alerta, evacuación y aguas bajas según el INA. Una escala sin lectura en los últimos dos días figura como «sin dato reciente». En el Delta y el Río de la Plata la altura depende de la marea y el viento, así que una lectura diaria puede no captar el pico. Se corrigieron dos errores de carga de la fuente: Empedrado del 22/9 al 2/10 (se usó la lectura de las 0 h) y Libertador el 22/8 (78,91 m, descartado). «Para la época» compara la altura de hoy con la altura media de ese mes en 8 de cada 10 años desde 1970. Pronósticos de altura: INA. Lluvia y viento: <a href="https://open-meteo.com/" target="_blank" rel="noopener">Open-Meteo</a> (CC BY 4.0). Satélite y lluvia en el mapa: <a href="https://earthdata.nasa.gov/gibs" target="_blank" rel="noopener">NASA GIBS</a>. La página se actualiza sola todos los días.</p>
+  <p class="rh-foot" id="fuente">Fuente: API pública del <a href="https://alerta.ina.gob.ar/pub/datos/" target="_blank" rel="noopener">Sistema de Alerta Hidrológico del INA</a>, red «escalas Prefectura Nacional». Alturas diarias desde el 1 de julio de 2026; niveles de alerta, evacuación y aguas bajas según el INA. Una escala sin lectura en los últimos dos días figura como «sin dato reciente». En el Delta y el Río de la Plata la altura depende de la marea y el viento, así que una lectura diaria puede no captar el pico. Se corrigieron dos errores de carga de la fuente: Empedrado del 22/9 al 2/10 (se usó la lectura de las 0 h) y Libertador el 22/8 (78,91 m, descartado). «Para la época» compara la altura de hoy con la altura media de ese mes en 8 de cada 10 años desde 1970. Pronósticos de altura: INA. Lluvia y viento: <a href="https://open-meteo.com/" target="_blank" rel="noopener">Open-Meteo</a> (CC BY 4.0). Caudales: GloFAS, del Servicio de Gestión de Emergencias de Copernicus, vía Open-Meteo (CC BY 4.0); el rango habitual es el caudal diario del mismo modelo entre el percentil 10 y el 90 de cada mes de 2001 a 2020. Satélite y lluvia en el mapa: <a href="https://earthdata.nasa.gov/gibs" target="_blank" rel="noopener">NASA GIBS</a>. La página se actualiza sola todos los días.</p>
   <p class="rh-foot">Datos: <a href="data/alturas.csv" download>descargar CSV</a>. Código: <a href="https://github.com/guillermoleale/alturas-rios" target="_blank" rel="noopener">github.com/guillermoleale/alturas-rios</a>. Hecho por Guillermo Leale con Claude.</p>
 </div>
 
@@ -530,6 +563,10 @@ dash.calc('resumen', {
   }
 
   // ---------- escalas para mirar ----------
+  // En pantallas angostas se muestran las primeras y el resto queda detrás de un botón.
+  const ATT_CORTO = 6;
+  const angosta = window.matchMedia('(max-width: 520px)');
+  let attAbierto = false;
   function drawAtencion(ea) {
     const box = document.getElementById('atencion-lista');
     const s = st(ea);
@@ -542,8 +579,15 @@ dash.calc('resumen', {
       ['A menos de 0,50 m del alerta', rows.filter((r) => r.estado !== 'Evacuación' && r.estado !== 'Alerta' && r.margen_alerta >= -0.5)],
     ].filter((g) => g[1].length);
     if (!grupos.length) { box.replaceChildren(el('p', 'rh-empty', 'Ninguna escala está en alerta, en evacuación ni cerca del nivel de alerta.')); return; }
+    const total = grupos.reduce((n, g) => n + g[1].length, 0);
+    const largo = angosta.matches && total > ATT_CORTO + 2;
+    const corto = largo && !attAbierto;
+    let quedan = corto ? ATT_CORTO : Infinity;
     const out = [];
-    grupos.forEach(([titulo, items]) => {
+    grupos.forEach(([titulo, todos]) => {
+      const items = todos.slice(0, Math.max(0, quedan));
+      quedan -= items.length;
+      if (!items.length) return;
       out.push(el('p', 'rh-att-g', titulo));
       const grid = el('div', 'rh-att');
       items.forEach((r) => {
@@ -561,6 +605,16 @@ dash.calc('resumen', {
       });
       out.push(grid);
     });
+    if (largo) {
+      const b = el('button', 'rh-mas', corto ? 'Ver las ' + (total - ATT_CORTO) + ' restantes' : 'Ver menos');
+      b.type = 'button'; b.setAttribute('aria-expanded', String(!corto));
+      b.addEventListener('click', () => {
+        attAbierto = corto;
+        drawAtencion(ea);
+        if (!attAbierto) document.getElementById('atencion').scrollIntoView({ block: 'start' });
+      });
+      out.push(b);
+    }
     box.replaceChildren(...out);
   }
 
@@ -656,7 +710,7 @@ dash.calc('resumen', {
     const h = d.getUTCHours(), m = d.getUTCMinutes();
     return h || m ? base + ', ' + String(h).padStart(2, '0') + ':' + String(m).padStart(2, '0') + ' h' : base;
   };
-  const fDiaHora = (d) => DIAS[d.getUTCDay()] + ' ' + d.getUTCDate() + ', ' + d.getUTCHours() + ' h';
+  const fDiaHora = (d) => DIAS[d.getUTCDay()] + '\u00a0' + d.getUTCDate() + ', ' + d.getUTCHours() + '\u00a0h';
   const pronDe = (pr, sc) => (pr && pr.status === 'ok' && pr.data && pr.data.escalas && pr.data.escalas[String(sc)]) || null;
   const cliDe = (cl, sc) => (cl && cl.status === 'ok' && cl.data && cl.data.escalas && cl.data.escalas[String(sc)]) || null;
   const EPOCA_R = { Alta: 0, Habitual: 1, Baja: 2 };
@@ -665,6 +719,19 @@ dash.calc('resumen', {
     const m = cli.meses[String(Number(fecha.slice(5, 7)))];
     if (!m) return null;
     return v > m[2] ? 'Alta' : v < m[0] ? 'Baja' : 'Habitual';
+  };
+  // Tramos de cada mes calendario entre x0 y x1 con sus percentiles 10, 50 y 90.
+  const bandasMes = (meses, x0, x1) => {
+    const out = [];
+    let cur = new Date(Date.UTC(x0.getUTCFullYear(), x0.getUTCMonth(), 1));
+    while (cur <= x1) {
+      const sig = new Date(Date.UTC(cur.getUTCFullYear(), cur.getUTCMonth() + 1, 1));
+      const m = meses[String(cur.getUTCMonth() + 1)];
+      const a = cur < x0 ? x0 : cur, b = sig > x1 ? x1 : sig;
+      if (m && b > a) out.push({ a, b, p10: m[0], p50: m[1], p90: m[2] });
+      cur = sig;
+    }
+    return out;
   };
   const ultimoPron = (pron, desde) => {
     if (!pron || !pron.puntos.length) return null;
@@ -763,17 +830,7 @@ dash.calc('resumen', {
 
     // rango habitual por mes calendario
     const x0 = pts[0].d, x1 = lastF ? lastF.d : lastObs.d;
-    const bandas = [];
-    if (cli) {
-      let cur = new Date(Date.UTC(x0.getUTCFullYear(), x0.getUTCMonth(), 1));
-      while (cur <= x1) {
-        const sig = new Date(Date.UTC(cur.getUTCFullYear(), cur.getUTCMonth() + 1, 1));
-        const m = cli.meses[String(cur.getUTCMonth() + 1)];
-        const a = cur < x0 ? x0 : cur, b = sig > x1 ? x1 : sig;
-        if (m && b > a) bandas.push({ a, b, p10: m[0], p50: m[1], p90: m[2] });
-        cur = sig;
-      }
-    }
+    const bandas = cli ? bandasMes(cli.meses, x0, x1) : [];
 
     const notas = [];
     if (fuera.length) notas.push('Fuera de escala: ' + fuera.map((n) => n[0] + ' ' + fM(n[1]) + ' m').join(', ') + '.');
@@ -915,9 +972,9 @@ dash.calc('resumen', {
     const hoy = me.data.hoy;
     const masPas = datos.slice().sort((a, b) => b.ultimos7 - a.ultimos7)[0];
     const masFut = datos.slice().sort((a, b) => b.proximos7 - a.proximos7)[0];
-    res.textContent = 'En la última semana la mayor lluvia estimada fue en ' + masPas.nombre + ', con ' + nf0.format(masPas.ultimos7) + ' mm. '
+    res.textContent = 'En la última semana la mayor lluvia estimada fue en ' + masPas.nombre + ', con ' + nf0.format(masPas.ultimos7) + '\u00a0mm. '
       + (masFut.proximos7 < 5 ? 'No se espera lluvia importante en la cuenca en los próximos 7 días.'
-        : 'Para los próximos 7 días se esperan hasta ' + nf0.format(masFut.proximos7) + ' mm en ' + masFut.nombre + '.');
+        : 'Para los próximos 7 días se esperan hasta ' + nf0.format(masFut.proximos7) + '\u00a0mm en ' + masFut.nombre + '.');
 
     box.replaceChildren();
     const W = Math.max(280, box.clientWidth);
@@ -925,26 +982,33 @@ dash.calc('resumen', {
     const svg = d3.select(box).append('svg').attr('width', '100%');
     const cab = ['Últimos 7 d', 'Próximos 7 d'];
     const colW = d3.max(cab, (c) => textW(svg, c)) + 10;
+    // En pantallas angostas el nombre y los totales van en una línea y las barras usan todo el ancho debajo.
     const labW = angosto ? 0 : Math.min(W * 0.32, d3.max(datos, (d) => textW(svg, d.nombre)) + 16);
-    const rowH = angosto ? 56 : 36, top = 22, barH = angosto ? 26 : 24;
-    const H = top + datos.length * rowH + 4;
+    const rowH = angosto ? 58 : 36, top = 22, barH = angosto ? 26 : 24;
+    const H = top + datos.length * rowH + (angosto ? 18 : 4);
     svg.attr('viewBox', `0 0 ${W} ${H}`).attr('role', 'img').attr('aria-label', 'Lluvia diaria por punto de la cuenca');
-    const bx1 = W - colW * 2 - 8;
+    const bx1 = angosto ? W : W - colW * 2 - 8;
+    const colX = (k) => bx1 + colW * (k + 1) + 4;
     const n = datos[0].dias.length;
     const x = d3.scaleBand(d3.range(n), [labW, bx1]).paddingInner(0.2);
     const ymax = Math.max(10, d3.max(datos, (d) => d3.max(d.dias, (z) => z.mm || 0)));
     const yh = d3.scaleLinear([0, ymax], [0, barH]);
     const iHoy = Math.max(0, datos[0].dias.findIndex((z) => z.fecha === hoy));
     const xHoy = x(iHoy) - (x.step() - x.bandwidth()) / 2;
-    cab.forEach((c, i) => svg.append('text').attr('x', bx1 + colW * (i + 1) + 4).attr('y', 12).attr('text-anchor', 'end')
+    if (angosto) {
+      const c = svg.append('text').attr('x', W).attr('y', 12).attr('text-anchor', 'end').attr('font-size', 11).attr('fill', 'var(--color-fg-muted)');
+      c.append('tspan').attr('fill', 'var(--color-fg)').text('últimos 7 d'); c.append('tspan').text(' · próximos 7 d');
+    } else cab.forEach((c, i) => svg.append('text').attr('x', colX(i)).attr('y', 12).attr('text-anchor', 'end')
       .attr('font-size', 11).attr('fill', 'var(--color-fg-muted)').text(c));
-    svg.append('line').attr('x1', xHoy).attr('x2', xHoy).attr('y1', top - 6).attr('y2', H).attr('stroke', 'var(--cds-chart-axis)').attr('stroke-dasharray', '2 3');
-    svg.append('text').attr('x', xHoy + 4).attr('y', 12).attr('font-size', 11).attr('fill', 'var(--color-fg-muted)').text('hoy');
+    svg.append('line').attr('x1', xHoy).attr('x2', xHoy).attr('y1', top - 6).attr('y2', angosto ? H - 14 : H)
+      .attr('stroke', 'var(--cds-chart-axis)').attr('stroke-dasharray', '2 3');
+    if (angosto) svg.append('text').attr('x', xHoy).attr('y', H - 2).attr('text-anchor', 'middle').attr('font-size', 11).attr('fill', 'var(--color-fg-muted)').text('hoy');
+    else svg.append('text').attr('x', xHoy + 4).attr('y', 12).attr('font-size', 11).attr('fill', 'var(--color-fg-muted)').text('hoy');
     const t = tip(box);
     datos.forEach((d, i) => {
       const y0 = top + i * rowH;
       const base = y0 + rowH - 6;
-      if (angosto) svg.append('text').attr('x', 0).attr('y', y0 + 12).attr('font-size', 12).attr('fill', 'var(--color-fg)').text(d.nombre);
+      if (angosto) svg.append('text').attr('x', 0).attr('y', y0 + 18).attr('font-size', 12).attr('fill', 'var(--color-fg)').text(d.nombre);
       else svg.append('text').attr('x', labW - 12).attr('y', base - barH / 2).attr('dy', '0.35em').attr('text-anchor', 'end')
         .attr('font-size', 12).attr('fill', 'var(--color-fg)').text(d.nombre);
       svg.append('line').attr('x1', labW).attr('x2', bx1).attr('y1', base + 0.5).attr('y2', base + 0.5).attr('stroke', 'var(--cds-chart-grid)');
@@ -963,11 +1027,124 @@ dash.calc('resumen', {
           })
           .on('mouseleave', () => { t.style.opacity = 0; });
       });
-      [d.ultimos7, d.proximos7].forEach((v, k) => svg.append('text').attr('x', bx1 + colW * (k + 1) + 4).attr('y', base - 4)
+      if (angosto) {
+        const tt = svg.append('text').attr('x', W).attr('y', y0 + 18).attr('text-anchor', 'end').attr('font-size', 12).style('font-variant-numeric', 'tabular-nums');
+        tt.append('tspan').attr('font-weight', 500).attr('fill', 'var(--color-fg)').text(nf0.format(d.ultimos7) + ' mm');
+        tt.append('tspan').attr('fill', 'var(--color-fg-muted)').text(' · ' + nf0.format(d.proximos7) + ' mm');
+      } else [d.ultimos7, d.proximos7].forEach((v, k) => svg.append('text').attr('x', colX(k)).attr('y', base - 4)
         .attr('text-anchor', 'end').attr('font-size', 12).attr('font-weight', k === 1 ? 400 : 500)
         .attr('fill', k === 1 ? 'var(--color-fg-muted)' : 'var(--color-fg)').style('font-variant-numeric', 'tabular-nums')
         .text(nf0.format(v) + ' mm'));
     });
+  }
+
+  // ---------- caudales ----------
+  const fQ = (v) => nf0.format(v) + '\u00a0m³/s';
+  const fPct = (v) => (v > 0 ? '+' : '') + minus(nf0.format(v)) + '\u00a0%';
+  const enumerar = (xs) => (xs.length > 1 ? xs.slice(0, -1).join(', ') + ' y ' + xs[xs.length - 1] : xs[0]);
+  function drawCaudales(qd) {
+    const box = document.getElementById('caudales-lista');
+    const res = document.getElementById('caudales-resumen');
+    const s = st(qd);
+    if (s !== 'ok') { stateBox(box, s); res.textContent = ''; return; }
+    box.classList.remove('dash-skeleton');
+    const puntos = ((qd.data && qd.data.puntos) || []).filter((p) => p.dias && p.dias.length > 1);
+    if (!puntos.length) { box.replaceChildren(el('p', 'rh-empty', 'Sin datos de caudales.')); res.textContent = ''; return; }
+    const hoy = qd.data.hoy;
+    const mes = Number(hoy.slice(5, 7));
+    const info = puntos.map((p) => {
+      const dias = p.dias.map((z) => ({ d: parseDia(z.f), q: z.q, lo: z.lo, hi: z.hi, pron: z.f >= hoy }));
+      const i0 = dias.findIndex((z) => z.pron);
+      const actual = i0 >= 0 ? dias[i0] : dias[dias.length - 1];
+      const fin = dias[dias.length - 1];
+      const nm = p.normal && p.normal[String(mes)];
+      const epoca = !nm ? null : actual.q > nm[2] ? 'Alto' : actual.q < nm[0] ? 'Bajo' : 'Habitual';
+      const cambio = fin.pron && fin !== actual && actual.q > 0 ? Math.round((fin.q - actual.q) / actual.q * 100) : null;
+      return { p, dias, actual, fin, epoca, cambio };
+    });
+
+    const frases = [];
+    const conNormal = info.filter((x) => x.epoca);
+    const altos = conNormal.filter((x) => x.epoca === 'Alto'), bajos = conNormal.filter((x) => x.epoca === 'Bajo');
+    if (conNormal.length > 1) {
+      const enMes = ' de lo habitual para ' + MESL[mes - 1];
+      const donde = (xs) => (xs.length > 3 ? xs.length + ' de los ' + conNormal.length + ' puntos' : enumerar(xs.map((x) => x.p.nombre)));
+      frases.push(!altos.length && !bajos.length ? 'Hoy el caudal simulado está dentro' + enMes + (conNormal.length === info.length ? ' en todos los puntos.' : ' en los ' + conNormal.length + ' puntos con rango calculado.')
+        : 'Hoy el caudal simulado está ' + [altos.length ? 'por encima' + enMes + ' en ' + donde(altos) : '',
+          bajos.length ? 'por debajo en ' + donde(bajos) : ''].filter(Boolean).join(', y ') + '.');
+    }
+    const conCambio = info.filter((x) => x.cambio != null);
+    const suben = conCambio.filter((x) => x.cambio >= 10), bajan = conCambio.filter((x) => x.cambio <= -10);
+    const mayor = (xs, signo) => xs.slice().sort((a, b) => signo * (b.cambio - a.cambio))[0];
+    const partes = [];
+    if (suben.length) { const m = mayor(suben, 1); partes.push('subas en ' + suben.length + (suben.length === 1 ? ' punto' : ' puntos') + ' (la mayor, ' + m.p.nombre + ': ' + fPct(m.cambio) + ')'); }
+    if (bajan.length) { const m = mayor(bajan, -1); partes.push('bajas en ' + bajan.length + (bajan.length === 1 ? ' punto' : ' puntos') + ' (la mayor, ' + m.p.nombre + ': ' + fPct(m.cambio) + ')'); }
+    if (conCambio.length) {
+      frases.push(partes.length ? 'En los próximos 30 días el modelo espera ' + partes.join(' y ') + '.'
+        : 'En los próximos 30 días el modelo no espera cambios de más del 10\u00a0% en ningún punto.');
+    }
+    res.textContent = frases.join(' ');
+
+    const tiles = info.map((x) => {
+      const b = el('button', 'rh-q'); b.type = 'button';
+      const graf = el('span', 'rh-q-chart');
+      const ep = el('span', 'rh-q-line' + (x.epoca && x.epoca !== 'Habitual' ? ' fuera' : ''), x.epoca ? x.epoca + ' para ' + MESL[mes - 1] : '');
+      b.append(el('span', 'rh-q-name', x.p.lugar), el('span', 'rh-q-line', 'Río ' + x.p.rio), el('span', 'rh-q-big', fQ(x.actual.q)), ep, graf,
+        el('span', 'rh-q-line', x.cambio != null ? 'Al ' + fCorta(x.fin.d) + ': ' + fPct(x.cambio) : ''));
+      b.setAttribute('aria-label', x.p.nombre + ': ' + fQ(x.actual.q) + (x.epoca ? ', ' + x.epoca.toLowerCase() + ' para ' + MESL[mes - 1] : '')
+        + (x.cambio != null ? ', ' + fPct(x.cambio) + ' al ' + fCorta(x.fin.d) : '') + '. Ver la altura de la escala.');
+      b.addEventListener('click', () => elegir(x.p.sitecode));
+      return [b, graf, x];
+    });
+    box.replaceChildren(...tiles.map((t) => t[0]));
+    tiles.forEach(([, graf, x]) => miniCaudal(graf, x, box));
+  }
+
+  // El tooltip vive en la grilla y no en cada tarjeta, para que no se salga de la pantalla.
+  function miniCaudal(box, { p, dias, actual }, tipBox) {
+    const W = Math.max(120, box.clientWidth), H = 72, mt = 4, mb = 4;
+    const x0 = dias[0].d, x1 = dias[dias.length - 1].d;
+    const bandas = p.normal ? bandasMes(p.normal, x0, x1) : [];
+    const vals = dias.flatMap((z) => [z.q, z.lo, z.hi]).filter((v) => v != null).concat(bandas.flatMap((b) => [b.p10, b.p90]));
+    const [vmin, vmax] = d3.extent(vals);
+    const pad = Math.max((vmax - vmin) * 0.06, vmax * 0.02);
+    const y = d3.scaleLinear([Math.max(0, vmin - pad), vmax + pad], [H - mb, mt]);
+    const x = d3.scaleUtc([x0, x1], [1, W - 1]);
+    const svg = d3.select(box).append('svg').attr('width', '100%').attr('viewBox', `0 0 ${W} ${H}`).attr('aria-hidden', 'true');
+    svg.selectAll('rect.hab').data(bandas).join('rect').attr('class', 'hab')
+      .attr('x', (b) => x(b.a)).attr('width', (b) => Math.max(0, x(b.b) - x(b.a)))
+      .attr('y', (b) => y(b.p90)).attr('height', (b) => Math.max(0, y(b.p10) - y(b.p90)))
+      .attr('fill', 'var(--color-fg)').attr('fill-opacity', 0.06);
+    const i0 = dias.indexOf(actual);
+    const pasado = dias.slice(0, i0 + 1), pron = dias.slice(i0);
+    svg.append('line').attr('x1', x(actual.d)).attr('x2', x(actual.d)).attr('y1', mt).attr('y2', H - mb)
+      .attr('stroke', 'var(--cds-chart-axis)').attr('stroke-dasharray', '2 3');
+    svg.append('path').datum(pron).attr('fill', dash.colors[0]).attr('fill-opacity', 0.16)
+      .attr('d', d3.area().x((z) => x(z.d)).y0((z) => y(z.lo ?? z.q)).y1((z) => y(z.hi ?? z.q)));
+    svg.append('path').datum(pron).attr('fill', 'none').attr('stroke', dash.colors[0]).attr('stroke-width', 1.5)
+      .attr('stroke-dasharray', '4 3').attr('d', d3.line().x((z) => x(z.d)).y((z) => y(z.q)));
+    svg.append('path').datum(pasado).attr('fill', 'none').attr('stroke', dash.colors[0]).attr('stroke-width', 2)
+      .attr('stroke-linejoin', 'round').attr('d', d3.line().x((z) => x(z.d)).y((z) => y(z.q)));
+    svg.append('circle').attr('cx', x(actual.d)).attr('cy', y(actual.q)).attr('r', 3).attr('fill', dash.colors[0])
+      .attr('stroke', 'var(--color-panel)').attr('stroke-width', 1.5);
+
+    const t = tip(tipBox);
+    const dot = svg.append('circle').attr('r', 3).attr('fill', dash.colors[0]).attr('stroke', 'var(--color-panel)').attr('stroke-width', 1.5).attr('opacity', 0);
+    const bis = d3.bisector((z) => z.d).center;
+    svg.append('rect').attr('width', W).attr('height', H).attr('fill', 'transparent')
+      .on('mousemove', (event) => {
+        const z = dias[bis(dias, x.invert(d3.pointer(event)[0]))];
+        dot.attr('cx', x(z.d)).attr('cy', y(z.q)).attr('opacity', 1);
+        const lines = [line('t-h', p.nombre + ' · ' + DIAS[z.d.getUTCDay()] + ' ' + fCorta(z.d))];
+        if (z.pron) {
+          lines.push(line('t-n', 'Pronóstico: ' + fQ(z.q)));
+          if (z.lo != null && z.hi - z.lo >= 1) lines.push(line(null, 'Rango probable: ' + nf0.format(z.lo) + ' a ' + nf0.format(z.hi)));
+        } else lines.push(line('t-n', 'Simulado: ' + fQ(z.q)));
+        const nm = p.normal && p.normal[String(z.d.getUTCMonth() + 1)];
+        if (nm) lines.push(line(null, 'Habitual en ' + MESL[z.d.getUTCMonth()] + ': ' + nf0.format(nm[0]) + ' a ' + nf0.format(nm[2])));
+        showTip(tipBox, t, event, lines);
+      })
+      .on('mouseleave', () => { t.style.opacity = 0; dot.attr('opacity', 0); });
   }
 
   // ---------- viento ----------
@@ -1199,7 +1376,7 @@ dash.calc('resumen', {
   dash.onData(() => {
     const es = dash.data('estaciones'), al = dash.data('alturas');
     const ea = dash.data('estado_actual'), rs = dash.data('resumen');
-    const pr = dash.data('pronosticos'), cl = dash.data('climatologia'), me = dash.data('meteo'), cp = dash.data('capas');
+    const pr = dash.data('pronosticos'), cl = dash.data('climatologia'), me = dash.data('meteo'), cp = dash.data('capas'), qd = dash.data('caudales');
     ultimo = { ea, al, pr, cl };
     drawResumen(rs, ea);
     drawAtencion(ea);
@@ -1207,6 +1384,7 @@ dash.calc('resumen', {
     drawPerfil(ea);
     drawEvolucion(al, es, ea, pr, cl);
     drawLluvia(me);
+    drawCaudales(qd);
     drawViento(me, pr);
     drawTabla(ea, al, pr, cl);
     if (primera && st(ea, al) === 'ok') {
@@ -1220,7 +1398,7 @@ dash.calc('resumen', {
     { root: document, rootMargin: '-35% 0px -60% 0px' });
   // Se empieza a seguir la sección visible recién después de la carga: si el link cambia antes,
   // el navegador salta a esa sección al terminar de cargar.
-  const observar = () => ['indicadores', 'atencion', 'mapa', 'perfil', 'evolucion', 'lluvia', 'viento', 'tabla'].forEach((id) => io.observe(document.getElementById(id)));
+  const observar = () => ['indicadores', 'atencion', 'mapa', 'perfil', 'evolucion', 'lluvia', 'caudales', 'viento', 'tabla'].forEach((id) => io.observe(document.getElementById(id)));
   if (document.readyState === 'complete') setTimeout(observar, 0); else window.addEventListener('load', () => setTimeout(observar, 0));
 })();
 </script>

@@ -4,7 +4,7 @@ Contexto para seguir trabajando en este repo con Claude Code. Leelo entero antes
 
 ## Qué es
 
-Dashboard público, estático, con la altura diaria de 81 escalas de Prefectura Naval en la Cuenca del Plata (Paraná, Paraguay, Uruguay, Iguazú, Delta y Río de la Plata). Muestra estados frente a los niveles de alerta, evacuación y aguas bajas, la evolución de cada escala, los pronósticos de altura del INA, el rango habitual por mes, la lluvia en la cuenca, el viento en el Río de la Plata y un mapa.
+Dashboard público, estático, con la altura diaria de 81 escalas de Prefectura Naval en la Cuenca del Plata (Paraná, Paraguay, Uruguay, Iguazú, Delta y Río de la Plata). Muestra estados frente a los niveles de alerta, evacuación y aguas bajas, la evolución de cada escala, los pronósticos de altura del INA, el rango habitual por mes, la lluvia en la cuenca, los caudales pronosticados por GloFAS, el viento en el Río de la Plata y un mapa.
 
 - Sitio: https://guillermoleale.github.io/alturas-rios/
 - Repo: github.com/guillermoleale/alturas-rios (público). Dueño: Guillermo Leale.
@@ -15,18 +15,19 @@ Dashboard público, estático, con la altura diaria de 81 escalas de Prefectura 
 
 ```
 site/                 lo que se publica en GitHub Pages
-  index.html          toda la página: estilos, HTML y scripts (unas 1250 líneas)
+  index.html          toda la página: estilos, HTML y scripts (unas 1400 líneas)
   assets/dash.js      reemplazo mínimo del objeto `dash` del artifact original
-  assets/og.png       imagen de vista previa para LinkedIn (estática, del 13/10/2026)
+  assets/og.png       imagen de vista previa para LinkedIn; la del repo es la de respaldo y el workflow la regenera al publicar
   data/               JSON y CSV que generan los scripts; el workflow los commitea
 scripts/
   actualizar.py       alturas diarias de cada escala (INA) → alturas.json, alturas.csv, meta.json
-  extras.py           pronósticos, climatología, lluvia, viento y capas de NASA (partes independientes)
+  extras.py           pronósticos, climatología, lluvia, viento, caudales y capas de NASA (partes independientes)
+  og.py               captura la página con Playwright y regenera assets/og.png
 .github/workflows/actualizar.yml
 README.md             explicación pública del proyecto y de las fuentes
 ```
 
-Python sin dependencias externas (solo biblioteca estándar). No hay build: el HTML usa d3 7.9.0 y Leaflet 1.9.4 desde cdnjs, y fuentes Inter y Source Serif 4 de Google Fonts.
+Los scripts de datos son Python sin dependencias externas (solo biblioteca estándar). La excepción es og.py, que necesita Playwright y por eso corre aparte, solo al publicar. No hay build: el HTML usa d3 7.9.0 y Leaflet 1.9.4 desde cdnjs, y fuentes Inter y Source Serif 4 de Google Fonts.
 
 ## Datos (site/data)
 
@@ -38,6 +39,7 @@ Python sin dependencias externas (solo biblioteca estándar). No hay build: el H
 | meta.json | actualizar.py | actualizado, hasta, lecturas, correcciones, descartes, fallas_ultima_corrida |
 | pronosticos.json | extras.py | `{generado, escalas: {sitecode: {emitido, modelo, calibracion, puntos: [{t, v, lo?, hi?}]}}}` |
 | climatologia.json | extras.py | `{generado, escalas: {sitecode: {desde, hasta, meses: {"1".."12": [p10, p50, p90, n]}}}}` |
+| caudales.json | extras.py | `{generado, hoy, puntos: [{sitecode, nombre, lugar, rio, lat, lon, dias: [{f, q, lo?, hi?}], normal: {"1".."12": [p10, p50, p90]}, periodo}]}`. 30 días de caudal simulado y 31 de pronóstico (mediana y percentiles 25 y 75), en m³/s |
 | meteo.json | extras.py | lluvia diaria (7 días atrás y 7 adelante) en 9 puntos; viento horario 4 días; períodos de "sudestada" |
 | capas.json | extras.py | capas NASA GIBS para Leaflet: id, nombre, url con {z}/{y}/{x}, maxNativeZoom, opacidad |
 
@@ -70,17 +72,22 @@ La página de alturas (contenidosweb.prefecturanaval.gob.ar/alturas/) bloquea el
 - Sin clave para uso no comercial, menos de 10.000 llamadas por día. Datos CC BY 4.0: mantener la atribución en la página.
 - Con varias coordenadas en una llamada devuelve una lista de objetos.
 - La herramienta WebFetch de Claude no puede leer api.open-meteo.com (robots), pero desde scripts o desde GitHub Actions funciona sin problema.
-- Flood API (GloFAS, caudales a meses vista) disponible en https://flood-api.open-meteo.com/v1/flood. Todavía no se usa.
+- Flood API (GloFAS v4, https://flood-api.open-meteo.com/v1/flood): caudal diario en una grilla de 0,05°. Se usa en `caudales()` de extras.py.
+  - Toma "el río más grande a 5 km" de la coordenada y a veces elige un arroyo (en Rosario devolvía 0,01 m³/s). Por eso `PUNTOS_CAUDAL` tiene celdas elegidas a mano: en una grilla de ±0,25° alrededor de la escala, la más cercana con al menos el 90 % del caudal máximo. Para sumar un punto hay que repetir esa búsqueda.
+  - Para los días pasados `river_discharge` trae lo que simuló el modelo; las estadísticas del conjunto (`_median`, `_p25`, `_p75`) solo tienen sentido desde hoy.
+  - Cuenta las llamadas por peso: más de 2 semanas de datos de un punto cuentan como varias. Veinte años de un punto son unas 520. Límites sin clave: 600 por minuto, 5.000 por hora, 10.000 por día. Con muchos puntos en una llamada da 429 enseguida.
+  - El rango habitual (percentiles 10, 50 y 90 por mes, 2001 a 2020) se calcula una sola vez por punto y se reutiliza mientras no cambien las coordenadas ni el período. Como mucho 2 puntos nuevos por corrida, con 65 s entre uno y otro.
+  - Es un modelo global sin calibrar con las escalas: el caudal absoluto puede estar lejos del real. En la página se compara siempre contra la propia simulación del modelo y se rotula como dato secundario.
 
 ### NASA GIBS
 
 - extras.py lee https://gibs.earthdata.nasa.gov/wmts/epsg3857/nrt/1.0.0/WMTSCapabilities.xml y arma la URL de cada capa: saca `{Time}` (sin fecha devuelve la imagen más reciente) y reemplaza TileMatrixSet, z, y, x.
 - Capas usadas: `GOES-East_ABI_GeoColor_v0_NRT` (GoogleMapsCompatible_Level7, png) e `IMERG_Precipitation_Rate_30min_v7_NRT` (Level6, png). IMERG solo pinta donde llueve y llega con algunas horas de demora.
-- Que las imágenes se vean bien en el sitio no se verificó a ojo. Revisarlo en el navegador.
+- Verificadas en el navegador el 13/10/2026 (claro, oscuro y celular). IMERG usa verde a rojo para lluvia y celeste a violeta para nieve (colormap `GPM_Precipitation_Rate` de GIBS); la nota del mapa lo explica.
 
 ### Mapa base
 
-OpenStreetMap estándar (tile.openstreetmap.org) con atribución. **CARTO ya no sirve sin clave de API** (devuelve mosaicos con la marca "API KEY REQUIRED"). Para que no le gane a los puntos, la capa base lleva `className: 'base-osm'` y un filtro CSS (menos saturación; invertida en modo oscuro). El filtro va solo en esa capa, no en todo el panel de mosaicos, para no invertir las capas de NASA.
+OpenStreetMap estándar (tile.openstreetmap.org) con atribución. **CARTO ya no sirve sin clave de API** (devuelve mosaicos con la marca "API KEY REQUIRED"). Para que no le gane a los puntos, la capa base lleva `className: 'base-osm'` y un filtro CSS (menos saturación; invertida en modo oscuro). El filtro va solo en esa capa, no en todo el panel de mosaicos, para no invertir las capas de NASA. Los mosaicos llevan `mix-blend-mode: normal`: Leaflet 1.9 usa `plus-lighter` y, con zoom fraccionario, filtro u opacidad, deja líneas claras entre mosaicos. Agrandar los mosaicos 1 px lo empeora.
 
 ## Reglas de datos (actualizar.py)
 
@@ -92,7 +99,9 @@ OpenStreetMap estándar (tile.openstreetmap.org) con atribución. **CARTO ya no 
 
 ## Página (site/index.html)
 
-- Secciones, en orden y con estos `id`: encabezado (`inicio`), indicadores, atencion (escalas para mirar), mapa, perfil (distancia al alerta por tramo), evolucion, lluvia, viento, tabla, fuente.
+- Secciones, en orden y con estos `id`: encabezado (`inicio`), indicadores, atencion (escalas para mirar), mapa, perfil (distancia al alerta por tramo), evolucion, lluvia, caudales, viento, tabla, fuente.
+- "Escalas para mirar": hasta 520 px de ancho las tarjetas pasan a filas y se muestran las primeras 6, con un botón para ver el resto (`ATT_CORTO`).
+- Caudales: una tarjeta por punto con caudal de hoy, comparación con el rango habitual del mes, minigráfico (30 días atrás y 30 adelante) y variación al último día del pronóstico. Tocar una tarjeta lleva a la evolución de su escala. El tooltip vive en la grilla y no en cada tarjeta para no salirse de la pantalla.
 - Scripts: el primero define dos cálculos con `dash.calc`: `estado_actual` (última lectura, variación a 24 h y 7 días, margen al alerta y estado) y `resumen` (cantidad de escalas por estado). El segundo, dentro de un IIFE, dibuja todo; está dividido por comentarios `// ---------- sección ----------`. El último lee meta.json para el texto "Actualizado el…".
 - `assets/dash.js` imita la API del artifact: `dash.data(id)` → `{status, data}` (status loading, ok o error), `dash.onData(fn)` redibuja cuando cambian los datos, los filtros o el ancho, `dash.calc`, `dash.params/setParams/resetParams` (filtros `estacion`, `dias`, `tramo`, que se reflejan en la URL), `dash.setLink` (hash de la sección) y `dash.colors`. Para sumar una fuente nueva hay que agregarla a `SOURCES` en dash.js.
 - Los atributos `data-source`, `data-field` y `data-where` del HTML son restos del artifact. No hacen nada, pero no molestan.
@@ -105,12 +114,14 @@ OpenStreetMap estándar (tile.openstreetmap.org) con atribución. **CARTO ya no 
   - El `IntersectionObserver` que actualiza el hash de la URL arranca recién después del evento `load`. Si cambia el hash antes, Chrome salta a esa sección al terminar de cargar.
   - El scroll inicial solo respeta el hash con el que se abrió la página (`hashInicial`).
   - Los estilos que pisan a Leaflet llevan el prefijo `.rh .rh-map`, porque el CSS de Leaflet se carga después y empata en especificidad.
+  - Las líneas claras entre mosaicos del mapa (ver Mapa base).
 
 ## Actualización y publicación
 
 - Workflow `.github/workflows/actualizar.yml`: cron `50 15 * * *` y `50 22 * * *` (UTC, o sea 12:50 y 19:50 en Argentina), `workflow_dispatch` y cada push a main.
 - Job `actualizar`: corre actualizar.py, después extras.py con `continue-on-error`, y commitea `site/data/` como github-actions[bot]. Los pushes del bot no disparan otro workflow, así que no hay bucle.
-- Job `publicar`: hace checkout de main ya actualizado y publica `site/` con actions/deploy-pages. En el repo, Pages está configurado con Source: GitHub Actions.
+- Job `publicar`: hace checkout de main ya actualizado, regenera `assets/og.png` con `scripts/og.py` (instala Playwright 1.56.0 y Chromium; `continue-on-error`, si falla queda la imagen del repo) y publica `site/` con actions/deploy-pages. La imagen nueva no se commitea, para no llenar el repo de binarios. En el repo, Pages está configurado con Source: GitHub Actions.
+- LinkedIn guarda en caché la vista previa de cada URL unos 7 días; para forzarla, usar el Post Inspector de LinkedIn.
 - La climatología se recalcula sola cada 30 días; para forzarla, `python scripts/extras.py --forzar-climatologia`.
 - Antes de pushear, siempre `git pull`: el bot commitea datos varias veces por día.
 
@@ -119,7 +130,8 @@ OpenStreetMap estándar (tile.openstreetmap.org) con atribución. **CARTO ya no 
 ```bash
 python scripts/actualizar.py                 # baja lecturas nuevas (necesita red)
 python scripts/actualizar.py --solo-archivos # regenera CSV y meta sin red
-python scripts/extras.py                     # pronósticos, lluvia, viento y capas
+python scripts/extras.py                     # pronósticos, lluvia, viento, caudales y capas
+python scripts/og.py                         # regenera og.png (necesita Playwright)
 python -m http.server 8000 -d site           # y abrir http://localhost:8000
 ```
 
@@ -128,10 +140,6 @@ Para revisar la página con Playwright: servir `site/` y abrirla en claro, en os
 ## Pendientes e ideas
 
 - Avisos por Telegram o mail cuando una escala cruza el alerta, desde el mismo workflow (secrets del repo). Fue el punto 5 de la lista de ideas y quedó sin hacer.
-- Caudales pronosticados de GloFAS vía la Flood API de Open-Meteo, como dato secundario y bien rotulado (punto 6).
-- La imagen og.png es una captura fija del 13/10/2026. Se podría regenerar en el workflow con Playwright.
-- Verificar a ojo las capas de NASA en el mapa y la vista en celular de las secciones de lluvia y viento.
-- La sección "Escalas para mirar" se hace larga en celular (18 tarjetas con los datos del 13/10).
 - Duplicado en claude.ai: sigue existiendo el artifact Dashboard original ("Alturas de los ríos") y una tarea programada de claude.ai, "Actualizar dashboard de alturas de ríos" (todos los días a las 12:50), que lo actualiza. Si el sitio público reemplaza al artifact, hay que borrar esa tarea; preguntarle a Guillermo antes.
 
 ## Estilo de escritura

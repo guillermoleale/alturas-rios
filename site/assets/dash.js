@@ -4,6 +4,7 @@
   const SOURCES = {
     estaciones: 'data/estaciones.json', alturas: 'data/alturas.json', pronosticos: 'data/pronosticos.json',
     climatologia: 'data/climatologia.json', meteo: 'data/meteo.json', capas: 'data/capas.json',
+    caudales: 'data/caudales.json',
   };
   const DEFAULTS = { estacion: 34, dias: 'todo', tramo: null };
   const state = {};

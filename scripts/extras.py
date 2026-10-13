@@ -5,6 +5,8 @@
 - climatologia.json : rango habitual de la altura media mensual por escala y mes (INA, desde 1970).
 - meteo.json        : lluvia de la última semana y pronóstico a 7 días en puntos de la cuenca,
                       y viento horario en el Río de la Plata (Open-Meteo, CC BY 4.0).
+- caudales.json     : caudal simulado y pronosticado a 30 días por GloFAS en puntos de la cuenca,
+                      con su rango habitual por mes (Copernicus vía Open-Meteo, CC BY 4.0).
 - capas.json        : capas de satélite y lluvia de NASA GIBS para el mapa.
 
 Uso: python scripts/extras.py [--forzar-climatologia]
@@ -41,6 +43,26 @@ PUNTOS_LLUVIA = [
 ]
 PUNTO_VIENTO = ("Río de la Plata frente a Buenos Aires", -34.55, -58.1)
 SUDESTADA = {"dir_min": 90, "dir_max": 180, "vel_min": 30, "horas_min": 6}
+
+# Celdas de GloFAS (0,05°) sobre el cauce principal, cerca de cada escala. La API toma el río más grande
+# a 5 km de la coordenada y a veces elige un arroyo, así que se buscó a mano, en una grilla de ±0,25°,
+# la celda más cercana con al menos el 90 % del caudal máximo de la zona.
+PUNTOS_CAUDAL = [
+    (8, "Andresito", "Iguazú", -25.575, -53.975),
+    (14, "Posadas", "Paraná", -27.375, -55.925),
+    (57, "Formosa", "Paraguay", -26.175, -58.175),
+    (19, "Corrientes", "Paraná", -27.475, -58.875),
+    (29, "Paraná", "Paraná", -31.675, -60.525),
+    (34, "Rosario", "Paraná", -32.925, -60.675),
+    (72, "Paso de los Libres", "Uruguay", -29.725, -57.125),
+    (79, "Concordia", "Uruguay", -31.375, -58.025),
+]
+# Rango habitual: percentiles diarios por mes en este período. Veinte años de datos de un punto
+# cuentan como unas 520 llamadas para Open-Meteo, así que se calcula una sola vez por punto
+# y como mucho NORMALES_POR_CORRIDA puntos por corrida.
+NORMAL_DESDE, NORMAL_HASTA = 2001, 2020
+NORMALES_POR_CORRIDA = 2
+FLOOD = "https://flood-api.open-meteo.com/v1/flood?"
 
 CAPAS = [
     ("GOES-East_ABI_GeoColor_v0_NRT", "Satélite (GOES-East, NASA)", 0.75),
@@ -237,6 +259,71 @@ def meteo():
     print(f"Meteorología: {len(lluvia)} puntos de lluvia, {len(horas)} horas de viento, {len(periodos)} períodos de viento del sudeste.")
 
 
+# ---------------------------------------------------------------- caudales GloFAS
+def normal_caudal(lat, lon):
+    r = get_json(FLOOD + urllib.parse.urlencode({
+        "latitude": lat, "longitude": lon, "daily": "river_discharge",
+        "start_date": f"{NORMAL_DESDE}-01-01", "end_date": f"{NORMAL_HASTA}-12-31"}))
+    por_mes = {}
+    for f, q in zip(r["daily"]["time"], r["daily"]["river_discharge"]):
+        if q is not None:
+            por_mes.setdefault(str(int(f[5:7])), []).append(q)
+    return {m: [round(percentil(vs, 0.1)), round(percentil(vs, 0.5)), round(percentil(vs, 0.9))]
+            for m, vs in sorted(por_mes.items(), key=lambda x: int(x[0]))}
+
+
+def caudales():
+    previa = {p["sitecode"]: p for p in (leer("caudales.json") or {}).get("puntos", [])}
+    periodo = f"{NORMAL_DESDE}-{NORMAL_HASTA}"
+    resp = get_json(FLOOD + urllib.parse.urlencode({
+        "latitude": ",".join(str(p[3]) for p in PUNTOS_CAUDAL),
+        "longitude": ",".join(str(p[4]) for p in PUNTOS_CAUDAL),
+        "daily": "river_discharge,river_discharge_median,river_discharge_p25,river_discharge_p75",
+        "past_days": 30, "forecast_days": 31,
+    }, safe=","))
+    if isinstance(resp, dict):
+        resp = [resp]
+    hoy = ahora().date().isoformat()
+    puntos, calculadas = [], 0
+    for (sc, lugar, rio, lat, lon), r in zip(PUNTOS_CAUDAL, resp):
+        nombre = f"{rio} en {lugar}"
+        d = r["daily"]
+        dias = []
+        for i, f in enumerate(d["time"]):
+            if f < hoy:
+                if d["river_discharge"][i] is not None:
+                    dias.append({"f": f, "q": round(d["river_discharge"][i])})
+            elif d["river_discharge_median"][i] is not None:
+                dia = {"f": f, "q": round(d["river_discharge_median"][i])}
+                lo, hi = d["river_discharge_p25"][i], d["river_discharge_p75"][i]
+                if lo is not None and hi is not None:
+                    dia["lo"], dia["hi"] = round(lo), round(hi)
+                dias.append(dia)
+        ant = previa.get(sc)
+        normal = ant["normal"] if ant and ant.get("normal") and ant.get("periodo") == periodo \
+            and (ant["lat"], ant["lon"]) == (lat, lon) else None
+        if normal is None and calculadas < NORMALES_POR_CORRIDA:
+            try:
+                time.sleep(65 if calculadas else 2)  # Open-Meteo limita a 600 llamadas por minuto
+                normal = normal_caudal(lat, lon)
+                calculadas += 1
+            except Exception as e:  # noqa: BLE001
+                print(f"  rango habitual de {nombre}: {e}")
+        puntos.append({"sitecode": sc, "nombre": nombre, "lugar": lugar, "rio": rio, "lat": lat, "lon": lon,
+                       "dias": dias, "normal": normal, "periodo": periodo if normal else None})
+    escribir("caudales.json", {
+        "generado": ahora().isoformat(timespec="minutes"), "hoy": hoy,
+        "fuente": "GloFAS v4, Servicio de Gestión de Emergencias de Copernicus, vía Open-Meteo.com (CC BY 4.0)",
+        "descripcion": "Caudal diario simulado (m³/s): los días anteriores a hoy, el valor del modelo; desde hoy, la mediana "
+                       "del pronóstico por conjuntos con los percentiles 25 y 75. normal: percentiles 10, 50 y 90 del caudal "
+                       "diario de cada mes en el período indicado.",
+        "puntos": puntos,
+    })
+    sin_normal = [p["nombre"] for p in puntos if not p["normal"]]
+    print(f"Caudales: {len(puntos)} puntos, {calculadas} rangos habituales nuevos"
+          + (f", faltan {len(sin_normal)}." if sin_normal else "."))
+
+
 # ---------------------------------------------------------------- capas NASA
 def capas():
     url = "https://gibs.earthdata.nasa.gov/wmts/epsg3857/nrt/1.0.0/WMTSCapabilities.xml"
@@ -273,6 +360,7 @@ def main():
         ("pronósticos", lambda: pronosticos(estaciones)),
         ("climatología", lambda: climatologia(estaciones, "--forzar-climatologia" in sys.argv)),
         ("meteorología", meteo),
+        ("caudales", caudales),
         ("capas", capas),
     ]
     fallas = []
