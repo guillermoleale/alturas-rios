@@ -4711,7 +4711,7 @@ sitecode,escala,tramo,rio,provincia,fecha,altura_m,nivel_alerta_m,nivel_evacuaci
 52,San Fernando,Delta y Río de la Plata,Luján,Buenos Aires,2026-10-10,1.02,3.0,3.5,0.33
 52,San Fernando,Delta y Río de la Plata,Luján,Buenos Aires,2026-10-11,1.24,3.0,3.5,0.33
 52,San Fernando,Delta y Río de la Plata,Luján,Buenos Aires,2026-10-12,1.37,3.0,3.5,0.33
-52,San Fernando,Delta y Río de la Plata,Luján,Buenos Aires,2026-10-13,1.4,3.0,3.5,0.33
+52,San Fernando,Delta y Río de la Plata,Luján,Buenos Aires,2026-10-13,1.31,3.0,3.5,0.33
 53,San Isidro,Delta y Río de la Plata,Río de la Plata,Buenos Aires,2026-07-01,0.7,3.0,3.5,0.3
 53,San Isidro,Delta y Río de la Plata,Río de la Plata,Buenos Aires,2026-07-02,2.4,3.0,3.5,0.3
 53,San Isidro,Delta y Río de la Plata,Río de la Plata,Buenos Aires,2026-07-03,0.95,3.0,3.5,0.3
@@ -7763,7 +7763,7 @@ sitecode,escala,tramo,rio,provincia,fecha,altura_m,nivel_alerta_m,nivel_evacuaci
 85,Buenos Aires,Delta y Río de la Plata,Río de la Plata,Buenos Aires,2026-10-10,0.85,3.3,3.9,0.21
 85,Buenos Aires,Delta y Río de la Plata,Río de la Plata,Buenos Aires,2026-10-11,1.06,3.3,3.9,0.21
 85,Buenos Aires,Delta y Río de la Plata,Río de la Plata,Buenos Aires,2026-10-12,1.21,3.3,3.9,0.21
-85,Buenos Aires,Delta y Río de la Plata,Río de la Plata,Buenos Aires,2026-10-13,1.26,3.3,3.9,0.21
+85,Buenos Aires,Delta y Río de la Plata,Río de la Plata,Buenos Aires,2026-10-13,1.12,3.3,3.9,0.21
 86,La Plata,Delta y Río de la Plata,Río de la Plata,Buenos Aires,2026-07-01,0.49,2.5,2.8,0.3
 86,La Plata,Delta y Río de la Plata,Río de la Plata,Buenos Aires,2026-07-02,2.5,2.5,2.8,0.3
 86,La Plata,Delta y Río de la Plata,Río de la Plata,Buenos Aires,2026-07-03,2.5,2.5,2.8,0.3
