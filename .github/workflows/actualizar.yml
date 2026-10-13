@@ -19,7 +19,6 @@ concurrency:
 
 jobs:
   actualizar:
-    if: github.event_name != 'push'
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
@@ -43,7 +42,6 @@ jobs:
 
   publicar:
     needs: actualizar
-    if: always() && (needs.actualizar.result == 'success' || needs.actualizar.result == 'skipped')
     runs-on: ubuntu-latest
     environment:
       name: github-pages
