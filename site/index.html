@@ -116,6 +116,18 @@ td.dash-skeleton { height: 3rem; }
 @media (prefers-color-scheme: dark) { .rh .rh-map .base-osm { filter: invert(1) hue-rotate(180deg) saturate(.4) brightness(.85) contrast(.9); } }
 .rh .rh-map .leaflet-control-layers { background: var(--color-panel); color: var(--color-fg); border-radius: var(--cds-radius); font-size: var(--cds-font-size-caption); }
 .rh .rh-map .leaflet-control-layers-expanded { padding: 6px 10px; }
+.rh-map path.m-tenue { fill-opacity: .3; stroke-opacity: .3; }
+.rh-anim { display: flex; flex-wrap: wrap; align-items: center; gap: var(--cds-gap-sm) var(--cds-gap-md); margin-top: var(--cds-gap-sm); font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); font-variant-numeric: tabular-nums; }
+.rh-anim-barra { display: flex; align-items: center; gap: var(--cds-gap-sm); flex: 1 1 100%; }
+.rh-anim-play { flex: none; width: 2rem; height: 2rem; padding: 0; border-radius: 50%; border: 1px solid var(--color-fg); background: var(--color-fg); color: var(--color-bg); display: inline-flex; align-items: center; justify-content: center; cursor: pointer; }
+.rh-anim-play svg { width: .75rem; height: .75rem; fill: currentColor; }
+.rh-anim input[type="range"] { flex: 1; min-width: 0; margin: 0; accent-color: var(--series-1); }
+.rh-anim-info { display: flex; flex-wrap: wrap; align-items: center; gap: var(--cds-gap-xs) var(--cds-gap-md); }
+.rh-anim-fecha { color: var(--color-fg); font-weight: var(--cds-font-weight-medium); }
+.rh-anim-cuenta { display: inline-flex; flex-wrap: wrap; align-items: center; gap: var(--cds-gap-xs) var(--cds-gap-sm); }
+.rh-anim-cuenta span { display: inline-flex; align-items: center; gap: var(--cds-gap-xs); }
+.rh-anim-tenue { margin-left: auto; display: inline-flex; align-items: center; gap: var(--cds-gap-xs); cursor: pointer; }
+.rh-anim-tenue input { margin: 0; accent-color: var(--series-1); }
 .rh-sw.line { height: 2px; border-radius: 0; background: var(--series-1); }
 .rh-sw.dash { height: 0; border-radius: 0; border-top: 2px dashed var(--series-1); background: none; }
 .rh-sw.habitual { height: .75rem; border-radius: 2px; background: var(--color-fg); opacity: .12; }
@@ -275,7 +287,7 @@ td.dash-skeleton { height: 3rem; }
 
   <section class="rh-card" id="mapa">
     <h2>Mapa de escalas</h2>
-    <p class="rh-note">Cada punto es una escala con el color de su estado. Tocá una para ver su altura y su evolución. Con el selector de capas, arriba a la derecha, podés sumar la imagen satelital y la lluvia estimada de NASA, que llega con algunas horas de demora: va del verde (lluvia débil) al rojo (intensa), y los celestes y violetas son nieve.</p>
+    <p class="rh-note">Cada punto es una escala con el color de su estado. Tocá una para ver su altura y su evolución. Con el botón de reproducir, debajo del mapa, ves cómo cambiaron los estados día por día desde el 1 de julio. En el selector de capas, arriba a la derecha, podés sumar la imagen satelital y la lluvia estimada de NASA, que llega con algunas horas de demora: va del verde (lluvia débil) al rojo (intensa), y los celestes y violetas son nieve.</p>
     <div class="rh-legend">
       <span><span class="rh-dot e-evac"></span>Evacuación</span>
       <span><span class="rh-dot e-alerta"></span>Alerta</span>
@@ -284,6 +296,14 @@ td.dash-skeleton { height: 3rem; }
       <span><span class="rh-dot e-otro"></span>Sin niveles o sin lectura reciente</span>
     </div>
     <div class="rh-map" id="mapa-escalas" role="region" aria-label="Mapa de escalas"></div>
+    <div class="rh-anim" id="mapa-anim" hidden>
+      <div class="rh-anim-barra">
+        <button type="button" class="rh-anim-play" id="mapa-play"></button>
+        <input type="range" id="mapa-dia" min="0" max="0" step="1" value="0" aria-label="Día que muestra el mapa">
+      </div>
+      <div class="rh-anim-info"><span class="rh-anim-fecha" id="mapa-fecha"></span><span class="rh-anim-cuenta" id="mapa-cuenta"></span></div>
+      <label class="rh-anim-tenue" title="Ahí la marea y el viento cambian el estado de un día a otro"><input type="checkbox" id="mapa-tenue">Atenuar Delta y Río de la Plata</label>
+    </div>
   </section>
 
   <section class="rh-card" id="perfil">
@@ -413,6 +433,14 @@ td.dash-skeleton { height: 3rem; }
 </div>
 
 <script>
+// Estado de una escala para una altura dada. Lo usan el estado actual y la animación del mapa.
+function estadoEscala(e, h) {
+  return e.evacuacion != null && h >= e.evacuacion ? 'Evacuación'
+    : e.alerta != null && h >= e.alerta ? 'Alerta'
+    : e.aguas_bajas != null && h < e.aguas_bajas ? 'Aguas bajas'
+    : e.alerta == null ? 'Sin niveles' : 'Normal';
+}
+
 dash.calc('estado_actual', {
   title: 'Estado actual por escala',
   description: 'Última lectura de cada escala, su variación a 1 y 7 días y su estado frente a los niveles de alerta, evacuación y aguas bajas.',
@@ -431,10 +459,7 @@ dash.calc('estado_actual', {
       const h7 = ult ? s[dia(ult, 7)] : undefined;
       const estado = !ult ? 'Sin datos'
         : ult < dia(hoy, 2) ? 'Sin dato reciente'
-        : e.evacuacion != null && h >= e.evacuacion ? 'Evacuación'
-        : e.alerta != null && h >= e.alerta ? 'Alerta'
-        : e.aguas_bajas != null && h < e.aguas_bajas ? 'Aguas bajas'
-        : e.alerta == null ? 'Sin niveles' : 'Normal';
+        : estadoEscala(e, h);
       return {
         sitecode: e.sitecode, nombre: e.nombre, tramo: e.tramo, rio: e.rio, provincia: e.provincia, orden: e.orden,
         fecha: ult || null, altura: h,
@@ -1326,10 +1351,100 @@ dash.calc('resumen', {
     }
     return d;
   };
-  function drawMapa(ea, es, cp) {
+  // Animación: el estado de cada escala día por día desde la primera lectura. Un día sin lectura toma la
+  // última de hasta 2 días antes, igual que el estado actual; si no hay, el punto queda hueco.
+  const TRAMO_TENUE = 'Delta y Río de la Plata';
+  const PASO_MS = 160;
+  const ICONO_PLAY = '<svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2.5 1.2v9.6L10.5 6z"/></svg>';
+  const ICONO_PAUSA = '<svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2.5 1.5h2.6v9H2.5zM6.9 1.5h2.6v9H6.9z"/></svg>';
+  const slider = document.getElementById('mapa-dia');
+  const btnPlay = document.getElementById('mapa-play');
+  const chkTenue = document.getElementById('mapa-tenue');
+  let dias = [], porDia = [], diaSel = null, animando = null, tenue = false, popAbierto = null;
+  const marcas = new Map();
+
+  function armarDias(al, es) {
+    const porSitio = new Map();
+    al.data.forEach((r) => {
+      const sc = Number(r.sitecode);
+      if (!porSitio.has(sc)) porSitio.set(sc, new Map());
+      porSitio.get(sc).set(r.fecha, Number(r.altura));
+    });
+    const [f0, f1] = d3.extent(al.data, (r) => r.fecha);
+    dias = d3.utcDay.range(parseDia(f0), new Date(+parseDia(f1) + 864e5)).map((d) => d.toISOString().slice(0, 10));
+    porDia = dias.map(() => new Map());
+    es.data.forEach((e) => {
+      const sc = Number(e.sitecode);
+      const s = porSitio.get(sc) || new Map();
+      const base = { sitecode: e.sitecode, nombre: e.nombre, tramo: e.tramo, rio: e.rio, alerta: e.alerta, evacuacion: e.evacuacion, aguas_bajas: e.aguas_bajas };
+      let ult = null;
+      dias.forEach((f, i) => {
+        if (s.has(f)) ult = i;
+        const fila = Object.assign({ fecha: null, altura: null, var_24h: null, estado: 'Sin datos' }, base);
+        if (ult != null) {
+          const h = s.get(dias[ult]), h1 = ult > 0 ? s.get(dias[ult - 1]) : undefined;
+          Object.assign(fila, {
+            fecha: dias[ult], altura: h, var_24h: h1 != null ? Math.round((h - h1) * 100) / 100 : null,
+            estado: i - ult > 2 ? 'Sin dato reciente' : estadoEscala(e, h),
+          });
+        }
+        porDia[i].set(sc, fila);
+      });
+    });
+  }
+
+  function pintarDia(i) {
+    diaSel = i;
+    const filas = porDia[i];
+    const orden = [];
+    let nEvac = 0, nAlerta = 0;
+    marcas.forEach(({ m, e }, sc) => {
+      const r = filas.get(sc);
+      const t = tenue && e.tramo === TRAMO_TENUE;
+      const fuerte = r.estado === 'Evacuación' || r.estado === 'Alerta';
+      const path = m.getElement();
+      if (path) {
+        path.classList.remove('m-evac', 'm-alerta', 'm-normal', 'm-bajas', 'm-otro', 'm-tenue');
+        path.classList.add(MCLASE[r.estado] || 'm-otro');
+        if (t) path.classList.add('m-tenue');
+      }
+      m.setRadius(t ? 4 : fuerte ? 8 : 6);
+      orden.push([t ? 0 : MRANGO[r.estado] || 0, m]);
+      if (!t && r.estado === 'Evacuación') nEvac++;
+      if (!t && r.estado === 'Alerta') nAlerta++;
+    });
+    orden.sort((a, b) => a[0] - b[0]).forEach(([, m]) => m.bringToFront());
+    slider.value = String(i);
+    slider.setAttribute('aria-valuetext', fDiaL(dias[i]));
+    document.getElementById('mapa-fecha').textContent = fDiaL(dias[i]) + (i === dias.length - 1 ? ' (último dato)' : '');
+    const item = (cls, txt) => { const n = el('span'); n.append(el('span', 'rh-dot ' + cls), txt); return n; };
+    document.getElementById('mapa-cuenta').replaceChildren(item('e-evac', nEvac + ' en evacuación'), item('e-alerta', nAlerta + ' en alerta'),
+      ...(tenue ? [el('span', null, 'sin contar el Delta')] : []));
+    if (popAbierto != null && marcas.has(popAbierto)) marcas.get(popAbierto).m.setPopupContent(popup(filas.get(popAbierto)));
+  }
+
+  function estadoPlay() {
+    btnPlay.innerHTML = animando ? ICONO_PAUSA : ICONO_PLAY;
+    btnPlay.setAttribute('aria-label', animando ? 'Pausar' : 'Reproducir la evolución desde el ' + (dias.length ? fDiaL(dias[0]) : '1 de julio'));
+  }
+  function parar() { clearInterval(animando); animando = null; estadoPlay(); }
+  btnPlay.addEventListener('click', () => {
+    if (animando) { parar(); return; }
+    if (!dias.length) return;
+    if (mapa) mapa.closePopup();
+    if (diaSel >= dias.length - 1) pintarDia(0);
+    animando = setInterval(() => {
+      if (diaSel >= dias.length - 1) parar(); else pintarDia(diaSel + 1);
+    }, PASO_MS);
+    estadoPlay();
+  });
+  slider.addEventListener('input', () => { if (animando) parar(); pintarDia(Number(slider.value)); });
+  chkTenue.addEventListener('change', () => { tenue = chkTenue.checked; if (dias.length) pintarDia(diaSel); });
+
+  function drawMapa(al, es, cp) {
     const box = document.getElementById('mapa-escalas');
     if (typeof L === 'undefined') { box.replaceChildren(el('div', 'rh-fail', 'No se pudo cargar el mapa')); return; }
-    const s = st(ea, es);
+    const s = st(al, es);
     if (s === 'error') { if (!mapa) box.replaceChildren(el('div', 'rh-fail', 'No se pudo cargar')); return; }
     if (s !== 'ok') return;
     if (!mapa) {
@@ -1355,19 +1470,31 @@ dash.calc('resumen', {
       });
       L.control.layers(null, extra, { collapsed: box.clientWidth < 700 }).addTo(mapa);
     }
-    if (mapaDe === ea.data) return;
-    mapaDe = ea.data;
-    capa.clearLayers();
-    const coords = new Map(es.data.map((e) => [Number(e.sitecode), e]));
-    ea.data.slice().sort((a, b) => (MRANGO[a.estado] || 0) - (MRANGO[b.estado] || 0)).forEach((r) => {
-      const e = coords.get(Number(r.sitecode));
-      if (!e) return;
-      const fuerte = r.estado === 'Evacuación' || r.estado === 'Alerta';
-      L.circleMarker([e.lat, e.lon], { radius: fuerte ? 8 : 6, weight: 1.5, className: 'm ' + (MCLASE[r.estado] || 'm-otro') })
-        .bindTooltip(r.nombre + (r.altura != null ? ' · ' + fM(r.altura) + ' m' : ''), { direction: 'top', offset: [0, -6] })
-        .bindPopup(() => popup(r))
-        .addTo(capa);
-    });
+    if (mapaDe !== al.data) {
+      // Datos nuevos: se arma la serie diaria y un punto por escala. Si se estaba mirando el último día, se sigue en el último.
+      const alFinal = diaSel == null || diaSel === dias.length - 1;
+      mapaDe = al.data;
+      if (animando) parar();
+      armarDias(al, es);
+      capa.clearLayers();
+      marcas.clear();
+      es.data.forEach((e) => {
+        const sc = Number(e.sitecode);
+        const fila = () => porDia[diaSel].get(sc);
+        const m = L.circleMarker([e.lat, e.lon], { radius: 6, weight: 1.5, className: 'm' })
+          .bindTooltip(() => { const r = fila(); return r.nombre + (r.altura != null ? ' · ' + fM(r.altura) + ' m' : ''); }, { direction: 'top', offset: [0, -6] })
+          .bindPopup(() => popup(fila()))
+          .on('popupopen', () => { popAbierto = sc; })
+          .on('popupclose', () => { if (popAbierto === sc) popAbierto = null; })
+          .addTo(capa);
+        marcas.set(sc, { m, e });
+      });
+      slider.max = String(dias.length - 1);
+      diaSel = alFinal ? dias.length - 1 : Math.min(diaSel, dias.length - 1);
+      document.getElementById('mapa-anim').hidden = false;
+      estadoPlay();
+    }
+    pintarDia(diaSel);
   }
 
   // ---------- dibujo ----------
@@ -1380,7 +1507,7 @@ dash.calc('resumen', {
     ultimo = { ea, al, pr, cl };
     drawResumen(rs, ea);
     drawAtencion(ea);
-    drawMapa(ea, es, cp);
+    drawMapa(al, es, cp);
     drawPerfil(ea);
     drawEvolucion(al, es, ea, pr, cl);
     drawLluvia(me);

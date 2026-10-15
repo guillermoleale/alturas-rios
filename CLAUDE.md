@@ -101,6 +101,7 @@ OpenStreetMap estándar (tile.openstreetmap.org) con atribución. **CARTO ya no 
 
 - Secciones, en orden y con estos `id`: encabezado (`inicio`), indicadores, atencion (escalas para mirar), mapa, perfil (distancia al alerta por tramo), evolucion, lluvia, caudales, viento, tabla, fuente.
 - "Escalas para mirar": hasta 520 px de ancho las tarjetas pasan a filas y se muestran las primeras 6, con un botón para ver el resto (`ATT_CORTO`).
+- Mapa animado: debajo del mapa hay un botón de reproducir, una barra de fechas y el conteo de escalas en evacuación y en alerta del día. `armarDias` calcula el estado de cada escala día por día con `estadoEscala` (la misma función que usa `estado_actual`, definida en el primer script) y la misma regla de 2 días para "sin dato reciente"; `pintarDia` cambia clases y radio de los puntos sin recrearlos. Arranca en el último día y solo se mueve si se toca reproducir (`PASO_MS` = 160 ms por día). El tilde "Atenuar Delta y Río de la Plata" achica y aclara esos puntos y los saca del conteo, porque la marea y el viento les cambian el estado de un día a otro.
 - Caudales: una tarjeta por punto con caudal de hoy, comparación con el rango habitual del mes, minigráfico (30 días atrás y 30 adelante) y variación al último día del pronóstico. Tocar una tarjeta lleva a la evolución de su escala. El tooltip vive en la grilla y no en cada tarjeta para no salirse de la pantalla.
 - Scripts: el primero define dos cálculos con `dash.calc`: `estado_actual` (última lectura, variación a 24 h y 7 días, margen al alerta y estado) y `resumen` (cantidad de escalas por estado). El segundo, dentro de un IIFE, dibuja todo; está dividido por comentarios `// ---------- sección ----------`. El último lee meta.json para el texto "Actualizado el…".
 - `assets/dash.js` imita la API del artifact: `dash.data(id)` → `{status, data}` (status loading, ok o error), `dash.onData(fn)` redibuja cuando cambian los datos, los filtros o el ancho, `dash.calc`, `dash.params/setParams/resetParams` (filtros `estacion`, `dias`, `tramo`, que se reflejan en la URL), `dash.setLink` (hash de la sección) y `dash.colors`. Para sumar una fuente nueva hay que agregarla a `SOURCES` en dash.js.
@@ -140,6 +141,7 @@ Para revisar la página con Playwright: servir `site/` y abrirla en claro, en os
 ## Pendientes e ideas
 
 - Avisos por Telegram o mail cuando una escala cruza el alerta, desde el mismo workflow (secrets del repo). Fue el punto 5 de la lista de ideas y quedó sin hacer.
+- Mapa animado, segunda etapa: sumar la lluvia de NASA (IMERG diaria de GIBS, con el parámetro de fecha) sincronizada con los días de la animación. Ojo: cada día carga mosaicos nuevos y en celular puede quedar entrecortado; habría que precargar.
 - Duplicado en claude.ai: sigue existiendo el artifact Dashboard original ("Alturas de los ríos") y una tarea programada de claude.ai, "Actualizar dashboard de alturas de ríos" (todos los días a las 12:50), que lo actualiza. Si el sitio público reemplaza al artifact, hay que borrar esa tarea; preguntarle a Guillermo antes.
 
 ## Estilo de escritura
