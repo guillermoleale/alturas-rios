@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-10-28T23:00-03:00",
+  "actualizado": "2026-10-29T17:40-03:00",
   "fuente": "INA, Sistema de Alerta Hidrológico (https://alerta.ina.gob.ar/pub/datos/), red escalas Prefectura Nacional (redId 10), variable 2 (altura hidrométrica)",
   "correcciones": [
     "Empedrado, 22/9 a 2/10/2026: las lecturas de las 9 h eran ceros o errores; se usó la de las 0 h.",
@@ -13,6 +13,6 @@
     }
   ],
   "fallas_ultima_corrida": [],
-  "hasta": "2026-10-28",
-  "lecturas": 9111
+  "hasta": "2026-10-29",
+  "lecturas": 9186
 }
