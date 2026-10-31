@@ -5475,7 +5475,7 @@ sitecode,escala,tramo,rio,provincia,fecha,altura_m,nivel_alerta_m,nivel_evacuaci
 52,San Fernando,Delta y Río de la Plata,Luján,Buenos Aires,2026-10-27,0.87,3.0,3.5,0.33
 52,San Fernando,Delta y Río de la Plata,Luján,Buenos Aires,2026-10-28,1.16,3.0,3.5,0.33
 52,San Fernando,Delta y Río de la Plata,Luján,Buenos Aires,2026-10-29,1.53,3.0,3.5,0.33
-52,San Fernando,Delta y Río de la Plata,Luján,Buenos Aires,2026-10-30,0.78,3.0,3.5,0.33
+52,San Fernando,Delta y Río de la Plata,Luján,Buenos Aires,2026-10-30,1.15,3.0,3.5,0.33
 53,San Isidro,Delta y Río de la Plata,Río de la Plata,Buenos Aires,2026-07-01,0.7,3.0,3.5,0.3
 53,San Isidro,Delta y Río de la Plata,Río de la Plata,Buenos Aires,2026-07-02,2.4,3.0,3.5,0.3
 53,San Isidro,Delta y Río de la Plata,Río de la Plata,Buenos Aires,2026-07-03,0.95,3.0,3.5,0.3
@@ -6814,7 +6814,7 @@ sitecode,escala,tramo,rio,provincia,fecha,altura_m,nivel_alerta_m,nivel_evacuaci
 65,San Javier,Uruguay,Uruguay,Misiones,2026-10-26,8.6,8.0,10.0,0.82
 65,San Javier,Uruguay,Uruguay,Misiones,2026-10-27,7.42,8.0,10.0,0.82
 65,San Javier,Uruguay,Uruguay,Misiones,2026-10-28,5.5,8.0,10.0,0.82
-65,San Javier,Uruguay,Uruguay,Misiones,2026-10-29,4.25,8.0,10.0,0.82
+65,San Javier,Uruguay,Uruguay,Misiones,2026-10-29,4.5,8.0,10.0,0.82
 65,San Javier,Uruguay,Uruguay,Misiones,2026-10-30,3.71,8.0,10.0,0.82
 66,Puerto Concepción,Uruguay,Uruguay,Misiones,2026-07-01,8.2,15.5,16.5,0.904
 66,Puerto Concepción,Uruguay,Uruguay,Misiones,2026-07-02,8.2,15.5,16.5,0.904
@@ -6936,7 +6936,7 @@ sitecode,escala,tramo,rio,provincia,fecha,altura_m,nivel_alerta_m,nivel_evacuaci
 66,Puerto Concepción,Uruguay,Uruguay,Misiones,2026-10-26,9.1,15.5,16.5,0.904
 66,Puerto Concepción,Uruguay,Uruguay,Misiones,2026-10-27,9.1,15.5,16.5,0.904
 66,Puerto Concepción,Uruguay,Uruguay,Misiones,2026-10-28,9.58,15.5,16.5,0.904
-66,Puerto Concepción,Uruguay,Uruguay,Misiones,2026-10-29,6.0,15.5,16.5,0.904
+66,Puerto Concepción,Uruguay,Uruguay,Misiones,2026-10-29,6.8,15.5,16.5,0.904
 66,Puerto Concepción,Uruguay,Uruguay,Misiones,2026-10-30,4.84,15.5,16.5,0.904
 67,Garruchos,Uruguay,Uruguay,Corrientes,2026-07-01,10.39,12.0,14.0,0.03
 67,Garruchos,Uruguay,Uruguay,Corrientes,2026-07-02,10.02,12.0,14.0,0.03
@@ -7058,7 +7058,7 @@ sitecode,escala,tramo,rio,provincia,fecha,altura_m,nivel_alerta_m,nivel_evacuaci
 67,Garruchos,Uruguay,Uruguay,Corrientes,2026-10-26,11.5,12.0,14.0,0.03
 67,Garruchos,Uruguay,Uruguay,Corrientes,2026-10-27,12.58,12.0,14.0,0.03
 67,Garruchos,Uruguay,Uruguay,Corrientes,2026-10-28,11.24,12.0,14.0,0.03
-67,Garruchos,Uruguay,Uruguay,Corrientes,2026-10-29,8.35,12.0,14.0,0.03
+67,Garruchos,Uruguay,Uruguay,Corrientes,2026-10-29,9.0,12.0,14.0,0.03
 67,Garruchos,Uruguay,Uruguay,Corrientes,2026-10-30,6.55,12.0,14.0,0.03
 68,Santo Tomé,Uruguay,Uruguay,Corrientes,2026-07-01,9.59,11.5,12.5,1.32
 68,Santo Tomé,Uruguay,Uruguay,Corrientes,2026-07-02,9.75,11.5,12.5,1.32
@@ -7180,7 +7180,7 @@ sitecode,escala,tramo,rio,provincia,fecha,altura_m,nivel_alerta_m,nivel_evacuaci
 68,Santo Tomé,Uruguay,Uruguay,Corrientes,2026-10-26,9.79,11.5,12.5,1.32
 68,Santo Tomé,Uruguay,Uruguay,Corrientes,2026-10-27,11.09,11.5,12.5,1.32
 68,Santo Tomé,Uruguay,Uruguay,Corrientes,2026-10-28,11.35,11.5,12.5,1.32
-68,Santo Tomé,Uruguay,Uruguay,Corrientes,2026-10-29,10.2,11.5,12.5,1.32
+68,Santo Tomé,Uruguay,Uruguay,Corrientes,2026-10-29,10.43,11.5,12.5,1.32
 68,Santo Tomé,Uruguay,Uruguay,Corrientes,2026-10-30,8.9,11.5,12.5,1.32
 69,Alvear,Uruguay,Uruguay,Corrientes,2026-07-01,6.21,9.5,11.0,0.89
 69,Alvear,Uruguay,Uruguay,Corrientes,2026-07-02,7.2,9.5,11.0,0.89
@@ -7302,7 +7302,7 @@ sitecode,escala,tramo,rio,provincia,fecha,altura_m,nivel_alerta_m,nivel_evacuaci
 69,Alvear,Uruguay,Uruguay,Corrientes,2026-10-26,7.4,9.5,11.0,0.89
 69,Alvear,Uruguay,Uruguay,Corrientes,2026-10-27,8.57,9.5,11.0,0.89
 69,Alvear,Uruguay,Uruguay,Corrientes,2026-10-28,9.03,9.5,11.0,0.89
-69,Alvear,Uruguay,Uruguay,Corrientes,2026-10-29,9.3,9.5,11.0,0.89
+69,Alvear,Uruguay,Uruguay,Corrientes,2026-10-29,9.29,9.5,11.0,0.89
 69,Alvear,Uruguay,Uruguay,Corrientes,2026-10-30,9.15,9.5,11.0,0.89
 70,La Cruz,Uruguay,Uruguay,Corrientes,2026-07-01,6.65,9.5,11.5,0.26
 70,La Cruz,Uruguay,Uruguay,Corrientes,2026-07-02,7.0,9.5,11.5,0.26
@@ -7424,7 +7424,7 @@ sitecode,escala,tramo,rio,provincia,fecha,altura_m,nivel_alerta_m,nivel_evacuaci
 70,La Cruz,Uruguay,Uruguay,Corrientes,2026-10-26,7.46,9.5,11.5,0.26
 70,La Cruz,Uruguay,Uruguay,Corrientes,2026-10-27,8.3,9.5,11.5,0.26
 70,La Cruz,Uruguay,Uruguay,Corrientes,2026-10-28,8.83,9.5,11.5,0.26
-70,La Cruz,Uruguay,Uruguay,Corrientes,2026-10-29,9.11,9.5,11.5,0.26
+70,La Cruz,Uruguay,Uruguay,Corrientes,2026-10-29,9.08,9.5,11.5,0.26
 70,La Cruz,Uruguay,Uruguay,Corrientes,2026-10-30,9.0,9.5,11.5,0.26
 71,Yapeyú,Uruguay,Uruguay,Corrientes,2026-07-01,5.88,9.5,10.5,0.0
 71,Yapeyú,Uruguay,Uruguay,Corrientes,2026-07-02,6.38,9.5,10.5,0.0
@@ -7546,7 +7546,7 @@ sitecode,escala,tramo,rio,provincia,fecha,altura_m,nivel_alerta_m,nivel_evacuaci
 71,Yapeyú,Uruguay,Uruguay,Corrientes,2026-10-26,6.72,9.5,10.5,0.0
 71,Yapeyú,Uruguay,Uruguay,Corrientes,2026-10-27,7.56,9.5,10.5,0.0
 71,Yapeyú,Uruguay,Uruguay,Corrientes,2026-10-28,8.16,9.5,10.5,0.0
-71,Yapeyú,Uruguay,Uruguay,Corrientes,2026-10-29,8.54,9.5,10.5,0.0
+71,Yapeyú,Uruguay,Uruguay,Corrientes,2026-10-29,8.48,9.5,10.5,0.0
 71,Yapeyú,Uruguay,Uruguay,Corrientes,2026-10-30,8.56,9.5,10.5,0.0
 72,Paso de los Libres,Uruguay,Uruguay,Corrientes,2026-07-01,5.13,7.5,8.5,0.9
 72,Paso de los Libres,Uruguay,Uruguay,Corrientes,2026-07-02,5.76,7.5,8.5,0.9
@@ -7908,7 +7908,7 @@ sitecode,escala,tramo,rio,provincia,fecha,altura_m,nivel_alerta_m,nivel_evacuaci
 74,Monte Caseros,Uruguay,Uruguay,Corrientes,2026-10-26,5.0,7.5,8.5,0.8
 74,Monte Caseros,Uruguay,Uruguay,Corrientes,2026-10-27,5.18,7.5,8.5,0.8
 74,Monte Caseros,Uruguay,Uruguay,Corrientes,2026-10-28,5.58,7.5,8.5,0.8
-74,Monte Caseros,Uruguay,Uruguay,Corrientes,2026-10-29,5.86,7.5,8.5,0.8
+74,Monte Caseros,Uruguay,Uruguay,Corrientes,2026-10-29,5.8,7.5,8.5,0.8
 74,Monte Caseros,Uruguay,Uruguay,Corrientes,2026-10-30,6.02,7.5,8.5,0.8
 75,Mocoretá,Uruguay,Uruguay,Corrientes,2026-07-01,6.48,10.3,12.0,5.24
 75,Mocoretá,Uruguay,Uruguay,Corrientes,2026-07-02,6.35,10.3,12.0,5.24
@@ -8030,7 +8030,7 @@ sitecode,escala,tramo,rio,provincia,fecha,altura_m,nivel_alerta_m,nivel_evacuaci
 75,Mocoretá,Uruguay,Uruguay,Corrientes,2026-10-26,8.92,10.3,12.0,5.24
 75,Mocoretá,Uruguay,Uruguay,Corrientes,2026-10-27,8.78,10.3,12.0,5.24
 75,Mocoretá,Uruguay,Uruguay,Corrientes,2026-10-28,8.72,10.3,12.0,5.24
-75,Mocoretá,Uruguay,Uruguay,Corrientes,2026-10-29,8.82,10.3,12.0,5.24
+75,Mocoretá,Uruguay,Uruguay,Corrientes,2026-10-29,8.81,10.3,12.0,5.24
 75,Mocoretá,Uruguay,Uruguay,Corrientes,2026-10-30,8.96,10.3,12.0,5.24
 76,Federación,Uruguay,Uruguay,Entre Ríos,2026-07-01,0.3,3.9,4.2,
 76,Federación,Uruguay,Uruguay,Entre Ríos,2026-07-02,0.08,3.9,4.2,
@@ -8163,7 +8163,7 @@ sitecode,escala,tramo,rio,provincia,fecha,altura_m,nivel_alerta_m,nivel_evacuaci
 77,Salto Grande Arriba,Uruguay,Uruguay,Entre Ríos,2026-10-26,34.7,35.5,36.0,33.0
 77,Salto Grande Arriba,Uruguay,Uruguay,Entre Ríos,2026-10-27,34.55,35.5,36.0,33.0
 77,Salto Grande Arriba,Uruguay,Uruguay,Entre Ríos,2026-10-28,34.47,35.5,36.0,33.0
-77,Salto Grande Arriba,Uruguay,Uruguay,Entre Ríos,2026-10-29,34.58,35.5,36.0,33.0
+77,Salto Grande Arriba,Uruguay,Uruguay,Entre Ríos,2026-10-29,34.53,35.5,36.0,33.0
 77,Salto Grande Arriba,Uruguay,Uruguay,Entre Ríos,2026-10-30,34.74,35.5,36.0,33.0
 78,Salto Grande Abajo,Uruguay,Uruguay,Entre Ríos,2026-07-01,9.62,17.3,17.8,5.6
 78,Salto Grande Abajo,Uruguay,Uruguay,Entre Ríos,2026-07-02,9.76,17.3,17.8,5.6
@@ -8285,7 +8285,7 @@ sitecode,escala,tramo,rio,provincia,fecha,altura_m,nivel_alerta_m,nivel_evacuaci
 78,Salto Grande Abajo,Uruguay,Uruguay,Entre Ríos,2026-10-26,12.24,17.3,17.8,5.6
 78,Salto Grande Abajo,Uruguay,Uruguay,Entre Ríos,2026-10-27,12.11,17.3,17.8,5.6
 78,Salto Grande Abajo,Uruguay,Uruguay,Entre Ríos,2026-10-28,12.08,17.3,17.8,5.6
-78,Salto Grande Abajo,Uruguay,Uruguay,Entre Ríos,2026-10-29,12.03,17.3,17.8,5.6
+78,Salto Grande Abajo,Uruguay,Uruguay,Entre Ríos,2026-10-29,12.05,17.3,17.8,5.6
 78,Salto Grande Abajo,Uruguay,Uruguay,Entre Ríos,2026-10-30,12.15,17.3,17.8,5.6
 79,Concordia,Uruguay,Uruguay,Entre Ríos,2026-07-01,6.16,11.0,12.5,0.88
 79,Concordia,Uruguay,Uruguay,Entre Ríos,2026-07-02,6.46,11.0,12.5,0.88
@@ -9018,7 +9018,7 @@ sitecode,escala,tramo,rio,provincia,fecha,altura_m,nivel_alerta_m,nivel_evacuaci
 85,Buenos Aires,Delta y Río de la Plata,Río de la Plata,Buenos Aires,2026-10-27,0.73,3.3,3.9,0.21
 85,Buenos Aires,Delta y Río de la Plata,Río de la Plata,Buenos Aires,2026-10-28,1.01,3.3,3.9,0.21
 85,Buenos Aires,Delta y Río de la Plata,Río de la Plata,Buenos Aires,2026-10-29,1.42,3.3,3.9,0.21
-85,Buenos Aires,Delta y Río de la Plata,Río de la Plata,Buenos Aires,2026-10-30,0.66,3.3,3.9,0.21
+85,Buenos Aires,Delta y Río de la Plata,Río de la Plata,Buenos Aires,2026-10-30,1.17,3.3,3.9,0.21
 86,La Plata,Delta y Río de la Plata,Río de la Plata,Buenos Aires,2026-07-01,0.49,2.5,2.8,0.3
 86,La Plata,Delta y Río de la Plata,Río de la Plata,Buenos Aires,2026-07-02,2.5,2.5,2.8,0.3
 86,La Plata,Delta y Río de la Plata,Río de la Plata,Buenos Aires,2026-07-03,2.5,2.5,2.8,0.3
